@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.polimi</groupId>
-	<artifactId>restproject</artifactId>
+	<artifactId>rest_project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>restproject Maven Webapp</name>
 	<url>http://maven.apache.org</url>
