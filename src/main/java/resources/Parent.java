@@ -14,7 +14,7 @@ public class Parent extends User {
 	public PersonalData getPersonalData() {
 		return personalData;
 	}
-	
+
 	public List<Student> getChildren() {
 		return children;
 	}
@@ -54,9 +54,9 @@ public class Parent extends User {
 	public void setNotifications(List<Notification> notifications) {
 		this.notifications = notifications;
 	}
-	
+
 	public void setPersonalData(PersonalData personalData) {
-		this.personalData=personalData;
+		this.personalData = personalData;
 	}
 
 }

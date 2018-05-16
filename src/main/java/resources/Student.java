@@ -7,4 +7,18 @@ public class Student extends User {
 
 	private Map<String,Integer> grades;
 	private List<Parent> parents;
+	
+	public Map<String, Integer> getGrades() {
+		return grades;
+	}
+	public List<Parent> getParents() {
+		return parents;
+	}
+	public void setGrades(Map<String, Integer> grades) {
+		this.grades = grades;
+	}
+	public void setParents(List<Parent> parents) {
+		this.parents = parents;
+	}
+	
 }

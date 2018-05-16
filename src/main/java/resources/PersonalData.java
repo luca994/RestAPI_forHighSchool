@@ -6,7 +6,6 @@ public class PersonalData {
 
 	String name;
 	String surname;
-	String id;
 	Date dateOfBirth;
 
 	public String getName() {
@@ -15,10 +14,6 @@ public class PersonalData {
 
 	public String getSurname() {
 		return surname;
-	}
-
-	public String getId() {
-		return id;
 	}
 
 	public Date getDateOfBirth() {
@@ -31,10 +26,6 @@ public class PersonalData {
 
 	public void setSurname(String surname) {
 		this.surname = surname;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public void setDateOfBirth(Date dateOfBirth) {
