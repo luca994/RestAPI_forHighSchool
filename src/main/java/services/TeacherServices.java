@@ -23,7 +23,7 @@ public class TeacherServices {
 	@GET
 	public PersonalData getPersonalData(@PathParam("id") String id) {
 		for(Teacher t : teachers) {
-			if(t.getPersonalData().getId().equals(id)) {
+			if(t.getUserId().equals(id)) {
 				return t.getPersonalData();
 			}
 		}
@@ -34,7 +34,7 @@ public class TeacherServices {
 	public Response setPersonalData(@PathParam("id") String id,@FormParam("name") String name,@FormParam("surname") String surname,@FormParam("year") String year,@FormParam("month")String month,@FormParam("day")String day) {
 		Teacher targetTeacher=null;
 		for (Teacher t : teachers)
-			if (t.getPersonalData().getId().equals(id))
+			if (t.getUserId().equals(id))
 				targetTeacher=t;
 		if(name!=null)
 			targetTeacher.getPersonalData().setName(name);
