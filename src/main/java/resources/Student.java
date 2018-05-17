@@ -5,16 +5,16 @@ import java.util.Map;
 
 public class Student extends User {
 
-	private Map<String,Integer> grades;
+	private Map<String,Float> grades;
 	private List<Parent> parents;
 	
-	public Map<String, Integer> getGrades() {
+	public Map<String, Float> getGrades() {
 		return grades;
 	}
 	public List<Parent> getParents() {
 		return parents;
 	}
-	public void setGrades(Map<String, Integer> grades) {
+	public void setGrades(Map<String, Float> grades) {
 		this.grades = grades;
 	}
 	public void setParents(List<Parent> parents) {

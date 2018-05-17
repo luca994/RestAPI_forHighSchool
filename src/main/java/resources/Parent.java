@@ -6,7 +6,7 @@ public class Parent extends User {
 
 	private PersonalData personalData;
 	private List<Student> children;
-	private List<Appointment> appointments;
+	private List<Appointment> appointments; //override del metodo add della lista per controllare gli orari e i giorni degli appuntamenti?
 	private List<Payment> oldPayments;
 	private List<Payment> newPayments;
 	private List<Notification> notifications;
