@@ -41,4 +41,21 @@ public class Payment {
 		this.paymentId = paymentId;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Payment other = (Payment) obj;
+		if (paymentId == null) {
+			if (other.paymentId != null)
+				return false;
+		} else if (!paymentId.equals(other.paymentId))
+			return false;
+		return true;
+	}
+
 }
