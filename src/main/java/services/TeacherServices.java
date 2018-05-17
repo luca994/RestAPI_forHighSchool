@@ -142,7 +142,7 @@ public class TeacherServices {
 		return null;
 	}
 
-	@POST
+	@POST //controllare se l'orario è libero (vedere classi Parent o Teacher)
 	@Path("appointments")
 	public Response addAppointment(@PathParam("id") String id, @FormParam("day") String day,
 			@FormParam("month") String month, @FormParam("year") String year, @FormParam("parentId") String parentId) {

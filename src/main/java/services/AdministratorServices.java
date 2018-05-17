@@ -1,0 +1,143 @@
+package services;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import resources.Administrator;
+import resources.Classroom;
+import resources.Parent;
+import resources.PersonalData;
+import resources.Student;
+
+@Path("admins/{id}")
+public class AdministratorServices {
+	List<Administrator> administrators;
+
+	private Administrator getAdminById(String id) {
+		for (Administrator a : administrators) {
+			if (a.getUserId().equals(id))
+				return a;
+		}
+		return null;
+	}
+
+	@GET
+	@Path("classrooms")
+	public List<Classroom> getClassrooms(@PathParam("id") String id) {
+		Administrator targetAdmin = getAdminById(id);
+		if (targetAdmin != null)
+			return targetAdmin.getClassrooms();
+		return null;
+	}
+
+	@GET
+	@Path("classrooms/{classroomsId}")
+	public Classroom getClassroom(@PathParam("id") String id, @PathParam("classroomId") String classroomId) {
+		Administrator targetAdmin = getAdminById(classroomId);
+		for (Classroom c : targetAdmin.getClassrooms()) {
+			if (c.getClassroomId().equals(classroomId)) {
+				return c;
+			}
+		}
+		return null;
+	}
+
+	@GET
+	@Path("parents")
+	public List<Parent> getParents(@PathParam("id") String id) {
+		Administrator targetAdmin = getAdminById(id);
+		if (targetAdmin != null)
+			return targetAdmin.getParents();
+		return null;
+	}
+
+	@POST
+	@Path("students")
+	public ResponseBuilder createStudent(@PathParam("id") String id, @FormParam("name") String name,
+			@FormParam("surname") String surname, @FormParam("day") String day, @FormParam("month") String month,
+			@FormParam("year") String year, @FormParam("parentIds") List<String> parentIds) {
+		Administrator admin = getAdminById(id);
+		Student studentToAdd = new Student();
+		PersonalData pdat = new PersonalData();
+		pdat.setName(name);
+		pdat.setSurname(surname);
+		try {
+			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		studentToAdd.setPersonalData(pdat);
+		studentToAdd.setParents(new ArrayList<>());
+		for (Parent p : admin.getParents()) {
+			if (parentIds.contains(p.getUserId())) {
+				studentToAdd.getParents().add(p);
+				p.getChildren().add(studentToAdd);
+			}
+		}
+		admin.getStudents().add(studentToAdd);
+		return Response.status(Response.Status.OK);
+	}
+
+	@PUT
+	@Path("classrooms/{classroomId}")
+	public ResponseBuilder addStudentToClass(@PathParam("id") String id, @PathParam("classroomId") String classroomId,
+			@FormParam("studentId") String studentId) {
+		Administrator targetAdministrator = getAdminById(id);
+		Student studentToAdd = null;
+		Classroom targetClassroom = null;
+		for(Student s : targetAdministrator.getStudents()) {
+			if(s.getUserId().equals(studentId)) {
+				studentToAdd = s;
+				break;
+			}
+		}
+		for(Classroom c : targetAdministrator.getClassrooms()) {
+			if(c.getClassroomId().equals(classroomId)) {
+				targetClassroom=c;
+				break;
+			}
+		}
+		targetClassroom.getStudents().add(studentToAdd);
+		return Response.status(Response.Status.OK);
+	}
+	
+	@POST
+	@Path("parents")
+	public ResponseBuilder createParent(@PathParam("id") String id, @FormParam("name") String name,
+			@FormParam("surname") String surname, @FormParam("day") String day, @FormParam("month") String month,
+			@FormParam("year") String year) {
+		Administrator admin = getAdminById(id);
+		Parent parentToAdd = new Parent();
+		PersonalData pdat = new PersonalData();
+		pdat.setName(name);
+		pdat.setSurname(surname);
+		try {
+			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		parentToAdd.setPersonalData(pdat);
+		parentToAdd.setAppointments(new ArrayList<>());
+		parentToAdd.setChildren(new ArrayList<>());
+		parentToAdd.setNewPayments(new ArrayList<>());
+		parentToAdd.setNotifications(new ArrayList<>());
+		parentToAdd.setOldPayments(new ArrayList<>());
+		admin.getParents().add(parentToAdd);
+		return Response.status(Response.Status.OK);
+	}
+	
+	
+}

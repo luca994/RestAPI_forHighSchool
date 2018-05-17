@@ -2,7 +2,7 @@ package resources;
 
 import java.util.List;
 
-public class Admininstrator extends User {
+public class Administrator extends User {
 
 	private List<Student> students;
 	private List<Classroom> classrooms;
