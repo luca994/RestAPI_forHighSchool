@@ -33,4 +33,21 @@ public class Classroom {
 		this.timetables = timetables;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Classroom other = (Classroom) obj;
+		if (classroomId == null) {
+			if (other.classroomId != null)
+				return false;
+		} else if (!classroomId.equals(other.classroomId))
+			return false;
+		return true;
+	}
+
 }
