@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -19,9 +20,11 @@ import resources.Classroom;
 import resources.Parent;
 import resources.PersonalData;
 import resources.Student;
+import resources.Teacher;
 
 @Path("admins/{id}")
 public class AdministratorServices {
+
 	List<Administrator> administrators;
 
 	private Administrator getAdminById(String id) {
@@ -68,6 +71,8 @@ public class AdministratorServices {
 			@FormParam("surname") String surname, @FormParam("day") String day, @FormParam("month") String month,
 			@FormParam("year") String year, @FormParam("parentIds") List<String> parentIds) {
 		Administrator admin = getAdminById(id);
+		if (admin == null || name == null || surname == null)
+			return Response.status(Response.Status.BAD_REQUEST);
 		Student studentToAdd = new Student();
 		PersonalData pdat = new PersonalData();
 		pdat.setName(name);
@@ -75,17 +80,18 @@ public class AdministratorServices {
 		try {
 			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Response.status(Response.Status.BAD_REQUEST);
 		}
 		studentToAdd.setPersonalData(pdat);
-		studentToAdd.setParents(new ArrayList<>());
 		for (Parent p : admin.getParents()) {
 			if (parentIds.contains(p.getUserId())) {
 				studentToAdd.getParents().add(p);
 				p.getChildren().add(studentToAdd);
 			}
 		}
+		// the administrator must add the parents before create the students
+		if (studentToAdd.getParents().isEmpty())
+			return Response.status(Response.Status.BAD_REQUEST);
 		admin.getStudents().add(studentToAdd);
 		return Response.status(Response.Status.OK);
 	}
@@ -97,22 +103,24 @@ public class AdministratorServices {
 		Administrator targetAdministrator = getAdminById(id);
 		Student studentToAdd = null;
 		Classroom targetClassroom = null;
-		for(Student s : targetAdministrator.getStudents()) {
-			if(s.getUserId().equals(studentId)) {
+		for (Student s : targetAdministrator.getStudents()) {
+			if (s.getUserId().equals(studentId)) {
 				studentToAdd = s;
 				break;
 			}
 		}
-		for(Classroom c : targetAdministrator.getClassrooms()) {
-			if(c.getClassroomId().equals(classroomId)) {
-				targetClassroom=c;
+		for (Classroom c : targetAdministrator.getClassrooms()) {
+			if (c.getClassroomId().equals(classroomId)) {
+				targetClassroom = c;
 				break;
 			}
 		}
+		if (targetAdministrator == null || studentToAdd == null || targetClassroom == null)
+			return Response.status(Response.Status.BAD_REQUEST);
 		targetClassroom.getStudents().add(studentToAdd);
 		return Response.status(Response.Status.OK);
 	}
-	
+
 	@POST
 	@Path("parents")
 	public ResponseBuilder createParent(@PathParam("id") String id, @FormParam("name") String name,
@@ -121,23 +129,46 @@ public class AdministratorServices {
 		Administrator admin = getAdminById(id);
 		Parent parentToAdd = new Parent();
 		PersonalData pdat = new PersonalData();
+		if (name == null || surname == null || admin == null)
+			return Response.status(Response.Status.BAD_REQUEST);
 		pdat.setName(name);
 		pdat.setSurname(surname);
 		try {
 			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return Response.status(Response.Status.BAD_REQUEST);
 		}
 		parentToAdd.setPersonalData(pdat);
-		parentToAdd.setAppointments(new ArrayList<>());
-		parentToAdd.setChildren(new ArrayList<>());
-		parentToAdd.setNewPayments(new ArrayList<>());
-		parentToAdd.setNotifications(new ArrayList<>());
-		parentToAdd.setOldPayments(new ArrayList<>());
 		admin.getParents().add(parentToAdd);
 		return Response.status(Response.Status.OK);
 	}
-	
-	
+
+	@POST
+	@Path("teachers")
+	public ResponseBuilder createTeacher(@PathParam("id") String id, @FormParam("name") String name,
+			@FormParam("surname") String surname, @FormParam("day") String day, @FormParam("month") String month,
+			@FormParam("year") String year, @FormParam("mapClassSubject") Map<String, String> classIdSubject) {
+
+		Administrator admin = getAdminById(id);
+		Teacher teacherToAdd = new Teacher();
+		PersonalData pdat = new PersonalData();
+		if (name == null || surname == null || admin == null)
+			return Response.status(Response.Status.BAD_REQUEST);
+		pdat.setName(name);
+		pdat.setSurname(surname);
+		try {
+			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
+		} catch (ParseException e) {
+			return Response.status(Response.Status.BAD_REQUEST);
+		}
+		teacherToAdd.setPersonalData(pdat);
+		List<String> classroomsToAdd = new ArrayList<>(classIdSubject.keySet());
+		for(Classroom c : admin.getClassrooms()) {
+			if(classroomsToAdd.contains(c.getClassroomId())) {
+				teacherToAdd.getClassSubject().put(c, classIdSubject.get(c.getClassroomId()));
+			}
+		}
+		return Response.status(Response.Status.ACCEPTED);
+	}
+
 }

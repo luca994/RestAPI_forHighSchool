@@ -1,6 +1,7 @@
 package resources;
 
 import java.util.Date;
+import java.util.Random;
 
 public class Appointment {
 
@@ -9,6 +10,11 @@ public class Appointment {
 	private Parent parent;
 	private String appointmentId;
 
+	public Appointment() {
+		Integer random = new Random().nextInt();
+		appointmentId = random.toString();
+	}
+	
 	public Date getDate() {
 		return date;
 	}

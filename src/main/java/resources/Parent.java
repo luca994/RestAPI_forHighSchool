@@ -1,6 +1,8 @@
 package resources;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Parent extends User {
 
@@ -11,6 +13,16 @@ public class Parent extends User {
 	private List<Payment> newPayments;
 	private List<Notification> notifications;
 
+	public Parent() {
+		children = new ArrayList<>();
+		appointments = new ArrayList<>();
+		oldPayments = new ArrayList<>();
+		newPayments = new ArrayList<>();
+		notifications = new ArrayList<>();
+		Integer random = new Random().nextInt();
+		this.userId = random.toString();
+	}
+	
 	public PersonalData getPersonalData() {
 		return personalData;
 	}

@@ -1,6 +1,8 @@
 package resources;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Administrator extends User {
 
@@ -8,6 +10,15 @@ public class Administrator extends User {
 	private List<Classroom> classrooms;
 	private List<Teacher> teachers;
 	private List<Parent> parents;
+	
+	public Administrator() {
+		students = new ArrayList<>();
+		classrooms = new ArrayList<>();
+		teachers = new ArrayList<>();
+		parents = new ArrayList<>();
+		Integer random = new Random().nextInt();
+		this.userId = random.toString();
+	}
 
 	public List<Student> getStudents() {
 		return students;

@@ -3,7 +3,7 @@ package resources;
 public abstract class User {
 
 	private PersonalData personalData;
-	private String userId;
+	protected String userId;
 
 	public PersonalData getPersonalData() {
 		return personalData;

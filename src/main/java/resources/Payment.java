@@ -1,6 +1,7 @@
 package resources;
 
 import java.util.Date;
+import java.util.Random;
 
 public class Payment {
 
@@ -9,6 +10,11 @@ public class Payment {
 	private String reason;
 	private String paymentId;
 
+	public Payment() {
+		Integer random = new Random().nextInt();
+		paymentId = random.toString();
+	}
+	
 	public Date getDate() {
 		return date;
 	}

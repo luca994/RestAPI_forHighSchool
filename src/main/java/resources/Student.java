@@ -1,12 +1,22 @@
 package resources;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Student extends User {
 
 	private Map<String,Float> grades;
 	private List<Parent> parents;
+	
+	public Student() {
+		grades = new HashMap<>();
+		parents = new ArrayList<>();
+		Integer random = new Random().nextInt();
+		this.userId = random.toString();
+	}
 	
 	public Map<String, Float> getGrades() {
 		return grades;

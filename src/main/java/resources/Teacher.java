@@ -1,7 +1,10 @@
 package resources;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Teacher extends User {
 
@@ -9,6 +12,14 @@ public class Teacher extends User {
 	private List<Notification> notifications;
 	private List<Appointment> appointments; //override del metodo add della lista per controllare gli orari e i giorni degli appuntamenti?
 
+	public Teacher() {
+		classSubject = new HashMap<>();
+		notifications = new ArrayList<>();
+		appointments = new ArrayList<>();
+		Integer random = new Random().nextInt();
+		this.userId = random.toString();
+	}
+	
 	public List<Appointment> getAppointments() {
 		return appointments;
 	}

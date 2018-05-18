@@ -1,13 +1,23 @@
 package resources;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Classroom {
 
 	private String classroomId;
 	private List<Student> students;
 	private Map<String, Timetable> timetables;
+	
+	public Classroom() {
+		students = new ArrayList<>();
+		timetables = new HashMap<>();
+		Integer random = new Random().nextInt();
+		classroomId = random.toString();
+	}
 
 	public String getClassroomId() {
 		return classroomId;
