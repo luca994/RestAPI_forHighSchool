@@ -1,4 +1,4 @@
-package services;
+package it.polimi.rest_project.resources;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,15 +15,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import resources.Appointment;
-import resources.Classroom;
-import resources.Parent;
-import resources.PersonalData;
-import resources.Student;
-import resources.Teacher;
+import it.polimi.rest_project.entities.Appointment;
+import it.polimi.rest_project.entities.Classroom;
+import it.polimi.rest_project.entities.Parent;
+import it.polimi.rest_project.entities.PersonalData;
+import it.polimi.rest_project.entities.Student;
+import it.polimi.rest_project.entities.Teacher;
 
 @Path("teachers/{id}")
-public class TeacherServices {
+public class TeacherResource {
 	
 	List<Teacher> teachers; // vedere se metterli statici o tramite database
 	List<Parent> parents; // vedere se metterli statici o tramite database

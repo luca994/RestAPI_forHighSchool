@@ -1,4 +1,4 @@
-package resources;
+package it.polimi.rest_project.entities;
 
 import java.util.ArrayList;
 import java.util.HashMap;

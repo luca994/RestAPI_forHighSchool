@@ -1,9 +1,9 @@
-package resources;
+package it.polimi.rest_project.entities;
 
 public abstract class User {
 
 	private PersonalData personalData;
-	protected String userId;
+	private String userId;
 
 	public PersonalData getPersonalData() {
 		return personalData;

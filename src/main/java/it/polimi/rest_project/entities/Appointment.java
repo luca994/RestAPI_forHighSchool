@@ -1,4 +1,4 @@
-package resources;
+package it.polimi.rest_project.entities;
 
 import java.util.Date;
 import java.util.Random;
@@ -10,11 +10,26 @@ public class Appointment {
 	private Parent parent;
 	private String appointmentId;
 
+	public Appointment(Parent parent, Teacher teacher, Date date) {
+		Integer random = new Random().nextInt();
+		appointmentId = random.toString();
+		this.parent = parent;
+		this.teacher = teacher;
+		this.date = date;
+	}
+
+	public Appointment(String appointmentId, Parent parent, Teacher teacher, Date date) {
+		this.appointmentId = appointmentId;
+		this.parent = parent;
+		this.teacher = teacher;
+		this.date = date;
+	}
+
 	public Appointment() {
 		Integer random = new Random().nextInt();
 		appointmentId = random.toString();
 	}
-	
+
 	public Date getDate() {
 		return date;
 	}

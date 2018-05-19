@@ -1,4 +1,4 @@
-package resources;
+package it.polimi.rest_project.entities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,14 +10,14 @@ public class Teacher extends User {
 
 	private Map<Classroom, String> classSubject;
 	private List<Notification> notifications;
-	private List<Appointment> appointments; //override del metodo add della lista per controllare gli orari e i giorni degli appuntamenti?
+	private List<Appointment> appointments; //(to delete) override del metodo add della lista per controllare gli orari e i giorni degli appuntamenti?
 
 	public Teacher() {
 		classSubject = new HashMap<>();
 		notifications = new ArrayList<>();
 		appointments = new ArrayList<>();
 		Integer random = new Random().nextInt();
-		this.userId = random.toString();
+		this.setUserId(random.toString());
 	}
 	
 	public List<Appointment> getAppointments() {

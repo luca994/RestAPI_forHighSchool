@@ -1,4 +1,4 @@
-package resources;
+package it.polimi.rest_project.entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,12 +6,16 @@ import java.util.Random;
 
 public class Parent extends User {
 
-	private PersonalData personalData;
 	private List<Student> children;
-	private List<Appointment> appointments; //override del metodo add della lista per controllare gli orari e i giorni degli appuntamenti?
-	private List<Payment> oldPayments;
-	private List<Payment> newPayments;
-	private List<Notification> notifications;
+	private List<Appointment> appointments; //  (to delete)override del metodo add della lista per controllare gli orari e i giorni
+											// degli appuntamenti?
+	private List<Payment> oldPayments;  //delete
+	private List<Payment> newPayments;  //delete
+	private List<Notification> notifications; //to delete
+
+	public Parent(PersonalData personalData) {
+		this.setPersonalData(personalData);
+	}
 
 	public Parent() {
 		children = new ArrayList<>();
@@ -20,11 +24,7 @@ public class Parent extends User {
 		newPayments = new ArrayList<>();
 		notifications = new ArrayList<>();
 		Integer random = new Random().nextInt();
-		this.userId = random.toString();
-	}
-	
-	public PersonalData getPersonalData() {
-		return personalData;
+		this.setUserId(random.toString());
 	}
 
 	public List<Student> getChildren() {
@@ -65,10 +65,6 @@ public class Parent extends User {
 
 	public void setNotifications(List<Notification> notifications) {
 		this.notifications = notifications;
-	}
-
-	public void setPersonalData(PersonalData personalData) {
-		this.personalData = personalData;
 	}
 
 }
