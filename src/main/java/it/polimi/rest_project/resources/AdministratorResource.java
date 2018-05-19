@@ -1,4 +1,4 @@
-package services;
+package it.polimi.rest_project.resources;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,15 +15,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import resources.Administrator;
-import resources.Classroom;
-import resources.Parent;
-import resources.PersonalData;
-import resources.Student;
-import resources.Teacher;
+import it.polimi.rest_project.entities.Administrator;
+import it.polimi.rest_project.entities.Classroom;
+import it.polimi.rest_project.entities.Parent;
+import it.polimi.rest_project.entities.PersonalData;
+import it.polimi.rest_project.entities.Student;
+import it.polimi.rest_project.entities.Teacher;
 
 @Path("admins/{id}")
-public class AdministratorServices {
+public class AdministratorResource {
 
 	List<Administrator> administrators;
 

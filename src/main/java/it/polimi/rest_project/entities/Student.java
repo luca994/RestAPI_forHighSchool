@@ -1,4 +1,4 @@
-package resources;
+package it.polimi.rest_project.entities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ public class Student extends User {
 		grades = new HashMap<>();
 		parents = new ArrayList<>();
 		Integer random = new Random().nextInt();
-		this.userId = random.toString();
+		this.setUserId(random.toString());
 	}
 	
 	public Map<String, Float> getGrades() {

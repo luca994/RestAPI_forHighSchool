@@ -1,4 +1,4 @@
-package resources;
+package it.polimi.rest_project.entities;
 
 import java.util.Date;
 import java.util.Random;
@@ -8,6 +8,8 @@ public class Payment {
 	private Date date;
 	private Integer amount;
 	private String reason;
+	private User user;
+	private boolean done;
 	private String paymentId;
 
 	public Payment() {
@@ -62,6 +64,22 @@ public class Payment {
 		} else if (!paymentId.equals(other.paymentId))
 			return false;
 		return true;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 
 }

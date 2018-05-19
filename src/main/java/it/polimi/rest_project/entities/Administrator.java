@@ -1,4 +1,4 @@
-package resources;
+package it.polimi.rest_project.entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.Random;
 
 public class Administrator extends User {
 
-	private List<Student> students;
-	private List<Classroom> classrooms;
-	private List<Teacher> teachers;
-	private List<Parent> parents;
+	private List<Student> students;    //to delete
+	private List<Classroom> classrooms;  //to delete
+	private List<Teacher> teachers;  // to delete
+	private List<Parent> parents;  // to delete 
 	
 	public Administrator() {
 		students = new ArrayList<>();
@@ -17,7 +17,7 @@ public class Administrator extends User {
 		teachers = new ArrayList<>();
 		parents = new ArrayList<>();
 		Integer random = new Random().nextInt();
-		this.userId = random.toString();
+		this.setUserId(random.toString());
 	}
 
 	public List<Student> getStudents() {
