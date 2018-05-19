@@ -1,8 +1,13 @@
 package it.polimi.rest_project.services;
 
-import javax.persistence.EntityManager;
+import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.entities.PersonalData;
+import it.polimi.rest_project.entities.Teacher;
 import it.polimi.rest_project.entities.User;
 
 public abstract class UserService {
@@ -44,5 +49,15 @@ public abstract class UserService {
 		userToUpdate.setPersonalData(personalDataToUpdate);
 		entityManager.persist(userToUpdate);
 		entityManager.getTransaction().commit();
+	}
+	
+	public List<Teacher> getTeachers(){
+		Query query = entityManager.createQuery("Select t.userId, t.personalData.name, t.personalData.surname from Teacher t");
+		return query.getResultList();
+	}
+	
+	public List<Parent> getParents(){
+		Query query = entityManager.createQuery("Select p.userId, t.personalData.name, t.personalData.surname from Parent p");
+		return query.getResultList();
 	}
 }
