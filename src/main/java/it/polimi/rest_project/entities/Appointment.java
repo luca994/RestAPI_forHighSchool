@@ -5,10 +5,11 @@ import java.util.Random;
 
 public class Appointment {
 
+	private String appointmentId;
 	private Date date;
 	private Teacher teacher;
 	private Parent parent;
-	private String appointmentId;
+
 
 	public Appointment(Parent parent, Teacher teacher, Date date) {
 		Integer random = new Random().nextInt();

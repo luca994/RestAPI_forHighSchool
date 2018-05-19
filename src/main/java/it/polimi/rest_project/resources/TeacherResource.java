@@ -21,55 +21,41 @@ import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.entities.PersonalData;
 import it.polimi.rest_project.entities.Student;
 import it.polimi.rest_project.entities.Teacher;
+import it.polimi.rest_project.services.TeacherService;
 
 @Path("teachers/{id}")
 public class TeacherResource {
-	
-	List<Teacher> teachers; // vedere se metterli statici o tramite database
-	List<Parent> parents; // vedere se metterli statici o tramite database
 
-	private Teacher getTeacherById(String tId) {
-		for (Teacher t : teachers) {
-			if (t.getUserId().equals(tId)) {
-				return t;
-			}
-		}
-		return null;
+	private TeacherService teacherService;
+
+	public TeacherResource() {
+		teacherService = new TeacherService();
 	}
 
 	@GET
-	public PersonalData getPersonalData(@PathParam("id") String id) {
-		Teacher targetTeacher = getTeacherById(id);
-		if (targetTeacher != null)
-			return targetTeacher.getPersonalData();
-		return null;
+	public PersonalData getPersonalData(@PathParam("id") String userId) {
+		return teacherService.getPersonalData(userId);
 	}
 
 	@PUT
-	public ResponseBuilder setPersonalData(@PathParam("id") String id, @FormParam("name") String name,
+	public Response updatePersonalData(@PathParam("id") String userId, @FormParam("name") String name,
 			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
 			@FormParam("day") String day) {
-		Teacher targetTeacher = getTeacherById(id);
-		if (name == null || surname == null)
-			return Response.status(Response.Status.BAD_REQUEST);
-		targetTeacher.getPersonalData().setName(name);
-		targetTeacher.getPersonalData().setSurname(surname);
+
 		try {
-			targetTeacher.getPersonalData()
-					.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
-		} catch (ParseException e) {			
-			return Response.status(Response.Status.BAD_REQUEST);
+			PersonalData newPersonalData = new PersonalData(name, surname,
+					new SimpleDateFormat().parse(year + "-" + month + "-" + day));
+			teacherService.updatePersonalData(userId, newPersonalData);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return Response.status(Response.Status.ACCEPTED);
+		return Response.ok().build();
 	}
 
 	@GET
 	@Path("classrooms")
 	public List<Classroom> getClassrooms(@PathParam("id") String id) {
-		Teacher targetTeacher = getTeacherById(id);
-		if (targetTeacher != null)
-			return new ArrayList<Classroom>(targetTeacher.getClassSubject().keySet());
-		return null;
 	}
 
 	@GET
@@ -104,7 +90,7 @@ public class TeacherResource {
 				break;
 			}
 		}
-		if(targetTeacher == null || targetClassroom == null || targetStudent == null || grade<0 || grade>10)
+		if (targetTeacher == null || targetClassroom == null || targetStudent == null || grade < 0 || grade > 10)
 			return Response.status(Response.Status.BAD_REQUEST);
 		targetStudent.getGrades().put(subject, grade);
 		return Response.status(Response.Status.ACCEPTED);
@@ -131,7 +117,7 @@ public class TeacherResource {
 				break;
 			}
 		}
-		if(targetTeacher == null || targetClassroom == null || targetStudent == null || grade<0 || grade>10)
+		if (targetTeacher == null || targetClassroom == null || targetStudent == null || grade < 0 || grade > 10)
 			return Response.status(Response.Status.BAD_REQUEST);
 		targetStudent.getGrades().put(subject, grade);
 		return Response.status(Response.Status.ACCEPTED);
@@ -146,15 +132,15 @@ public class TeacherResource {
 		return null;
 	}
 
-	@POST //controllare se l'orario è libero (vedere classi Parent o Teacher)
+	@POST // controllare se l'orario è libero (vedere classi Parent o Teacher)
 	@Path("appointments")
 	public ResponseBuilder addAppointment(@PathParam("id") String id, @FormParam("day") String day,
 			@FormParam("month") String month, @FormParam("year") String year, @FormParam("parentId") String parentId) {
 		Teacher targetTeacher = getTeacherById(id);
 		Parent targetParent = null;
-		for(Parent p : parents) {
-			if(p.getUserId().equals(parentId)) {
-				targetParent=p;
+		for (Parent p : parents) {
+			if (p.getUserId().equals(parentId)) {
+				targetParent = p;
 				break;
 			}
 		}
@@ -166,25 +152,26 @@ public class TeacherResource {
 		} catch (ParseException e) {
 			return Response.status(Response.Status.BAD_REQUEST);
 		}
-		if(targetTeacher == null || targetParent == null)
+		if (targetTeacher == null || targetParent == null)
 			return Response.status(Response.Status.BAD_REQUEST);
 		targetTeacher.getAppointments().add(appToAdd);
 		targetParent.getAppointments().add(appToAdd);
 		return Response.status(Response.Status.ACCEPTED);
 	}
-	
+
 	@DELETE
 	@Path("appointments/{appointmentId}")
-	public ResponseBuilder deleteAppointment(@PathParam("id") String id, @PathParam("appointmentId") String appointmentId) {
+	public ResponseBuilder deleteAppointment(@PathParam("id") String id,
+			@PathParam("appointmentId") String appointmentId) {
 		Teacher targetTeacher = getTeacherById(id);
 		Appointment targetAppointment = null;
-		for(Appointment a : targetTeacher.getAppointments()) {
-			if(a.getAppointmentId().equals(appointmentId)) {
-				targetAppointment=a;
+		for (Appointment a : targetTeacher.getAppointments()) {
+			if (a.getAppointmentId().equals(appointmentId)) {
+				targetAppointment = a;
 				break;
 			}
 		}
-		if(targetAppointment==null)
+		if (targetAppointment == null)
 			return Response.status(Response.Status.BAD_REQUEST);
 		targetTeacher.getAppointments().remove(targetAppointment);
 		return Response.status(Response.Status.ACCEPTED);

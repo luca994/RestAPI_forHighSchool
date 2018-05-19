@@ -1,34 +1,26 @@
 package it.polimi.rest_project.entities;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class Student extends User {
 
-	private Map<String,Float> grades;
-	private List<Parent> parents;
-	
+	private List<Grade> grades;
+
 	public Student() {
-		grades = new HashMap<>();
-		parents = new ArrayList<>();
+		grades = new ArrayList<Grade>();
 		Integer random = new Random().nextInt();
 		this.setUserId(random.toString());
 	}
-	
-	public Map<String, Float> getGrades() {
+
+	public List<Grade> getGrades() {
 		return grades;
 	}
-	public List<Parent> getParents() {
-		return parents;
-	}
-	public void setGrades(Map<String, Float> grades) {
+
+	public void setGrades(List<Grade> grades) {
 		this.grades = grades;
 	}
-	public void setParents(List<Parent> parents) {
-		this.parents = parents;
-	}
-	
+
+
 }

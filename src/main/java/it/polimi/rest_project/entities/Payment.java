@@ -5,18 +5,18 @@ import java.util.Random;
 
 public class Payment {
 
-	private Date date;
+	private String paymentId;
 	private Integer amount;
+	private Date date;
 	private String reason;
 	private User user;
 	private boolean done;
-	private String paymentId;
 
 	public Payment() {
 		Integer random = new Random().nextInt();
 		paymentId = random.toString();
 	}
-	
+
 	public Date getDate() {
 		return date;
 	}

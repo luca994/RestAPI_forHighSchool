@@ -14,8 +14,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import it.polimi.rest_project.entities.Appointment;
+import it.polimi.rest_project.entities.Notification;
 import it.polimi.rest_project.entities.Payment;
 import it.polimi.rest_project.entities.PersonalData;
+import it.polimi.rest_project.entities.Student;
 import it.polimi.rest_project.services.ParentService;
 
 @Path("parents/{id}")
@@ -33,7 +35,7 @@ public class ParentResource {
 	}
 
 	@PUT
-	public Response setPersonalData(@PathParam("id") String userId, @FormParam("name") String name,
+	public Response updatePersonalData(@PathParam("id") String userId, @FormParam("name") String name,
 			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
 			@FormParam("day") String day) {
 
@@ -101,6 +103,41 @@ public class ParentResource {
 	@Path("payments/{paymentId}")
 	public Response payPayment(@PathParam("id") String userId, @PathParam("paymentId") String paymentId) {
 		parentService.payParentPayments(paymentId);
+		return Response.ok().build();
+	}
+	
+	@GET
+	@Path("notifications")
+	public List<Notification> getNotifications(@PathParam("id") String userId){
+		return parentService.getParentNotifications(userId);
+	}
+	
+	@GET
+	@Path("students")
+	public List<Student> getStudents(@PathParam("id") String userId){
+		return parentService.getParentStudents(userId);
+	}
+	
+	@GET
+	@Path("students/{studentId}")
+	public Student getStudent(@PathParam("id") String userId,@PathParam("studentId") String studentId) {
+		return parentService.getParentStudent(userId,studentId);
+	}
+	
+	@PUT
+	@Path("students/{studentId}")
+	public Response updateStudentPersonalData(@PathParam("id") String userId,@PathParam("studentId") String studentId, @FormParam("name") String name,
+			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
+			@FormParam("day") String day) {
+
+		try {
+			PersonalData newPersonalData = new PersonalData(name, surname,
+					new SimpleDateFormat().parse(year + "-" + month + "-" + day));
+			parentService.updatePersonalData(studentId, newPersonalData);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return Response.ok().build();
 	}
 
