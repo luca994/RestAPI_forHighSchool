@@ -21,19 +21,12 @@ import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.entities.PersonalData;
 import it.polimi.rest_project.entities.Student;
 import it.polimi.rest_project.entities.Teacher;
+import it.polimi.rest_project.services.AdministratorService;
 
 @Path("admins/{id}")
 public class AdministratorResource {
 
-	List<Administrator> administrators;
-
-	private Administrator getAdminById(String id) {
-		for (Administrator a : administrators) {
-			if (a.getUserId().equals(id))
-				return a;
-		}
-		return null;
-	}
+	private AdministratorService administratorService;
 
 	@GET
 	@Path("classrooms")
