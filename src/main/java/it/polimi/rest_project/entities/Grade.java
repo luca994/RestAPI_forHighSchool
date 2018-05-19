@@ -2,29 +2,41 @@ package it.polimi.rest_project.entities;
 
 public class Grade {
 
+	private String gradeId;
 	private String subject;
-	private float value;
-	
-	public Grade() {}
-	
+	private float mark;
+
+	public Grade() {
+	}
+
 	public Grade(String subject, float value) {
 		super();
 		this.subject = subject;
-		this.value = value;
+		this.mark = value;
 	}
-	
+
 	public String getSubject() {
 		return subject;
 	}
-	public float getValue() {
-		return value;
-	}
+
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-	public void setValue(float value) {
-		this.value = value;
+
+	public String getGradeId() {
+		return gradeId;
 	}
-	
-	
+
+	public float getMark() {
+		return mark;
+	}
+
+	public void setGradeId(String gradeId) {
+		this.gradeId = gradeId;
+	}
+
+	public void setMark(float mark) {
+		this.mark = mark;
+	}
+
 }

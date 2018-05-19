@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import it.polimi.rest_project.entities.Appointment;
+import it.polimi.rest_project.entities.Grade;
 import it.polimi.rest_project.entities.Notification;
 import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.entities.Payment;
@@ -33,16 +34,31 @@ public class ParentService extends UserService {
 		return appointmentService.getAppointments(userId);
 	}
 
-	public boolean updateParentAppointment(String appointmentId, Date newDate) {
-		return appointmentService.updateAppointment(appointmentId, newDate);
+	private boolean checkIfAppointmentExists(String userId, String appointmentId) {
+		Query query = entityManager.createQuery("Select a from Appointment a where a.parent=:param");
+		query.setParameter("param", entityManager.find(Parent.class, userId));
+		if (query.getResultList().size() != 1)
+			return false;
+		else
+			return true;
+	}
+
+	public boolean updateParentAppointment(String userId, String appointmentId, Date newDate) {
+		if (checkIfAppointmentExists(userId, appointmentId) == false)
+			return false;
+		else
+			return appointmentService.updateAppointment(appointmentId, newDate);
 	}
 
 	public boolean addParentAppointment(String userId, String teacherId, Date date) {
 		return appointmentService.addAppointment(userId, teacherId, date);
 	}
 
-	public boolean deleteParentAppointment(String appointmentId) {
-		return appointmentService.deleteAppointment(appointmentId);
+	public boolean deleteParentAppointment(String userId, String appointmentId) {
+		if (checkIfAppointmentExists(userId, appointmentId) == false)
+			return false;
+		else
+			return appointmentService.deleteAppointment(appointmentId);
 	}
 
 	public List<Payment> getParentPayments(String userId) {
@@ -52,27 +68,37 @@ public class ParentService extends UserService {
 	public boolean payParentPayments(String paymentId) {
 		return paymentService.payPayment(paymentId);
 	}
-	
-	public List<Notification> getParentNotifications(String userId){
+
+	public List<Notification> getParentNotifications(String userId) {
 		Query query = entityManager.createQuery("Select n from Notification n where n.user=:param");
 		query.setParameter("param", entityManager.find(Parent.class, userId));
 		return query.getResultList();
 	}
-	
-	public List<Student> getParentStudents(String userId){
+
+	public List<Student> getParentStudents(String userId) {
 		Parent targetParent = entityManager.find(Parent.class, userId);
 		return targetParent.getChildren();
 	}
 
-	public Student getParentStudent(String userId,String studentId){
+	public Student getParentStudent(String userId, String studentId) {
 		Student targetStudent = null;
-		for(Student s:getParentStudents(userId))
-			if(s.getUserId().equals(studentId)) {
-				targetStudent=s;
+		for (Student s : getParentStudents(userId))
+			if (s.getUserId().equals(studentId)) {
+				targetStudent = s;
 				break;
 			}
 		return targetStudent;
 	}
-	
-	
+
+	public List<Grade> getParentGrades(String userId, String studentId) {
+		boolean authorization = false;
+		Student targetStudent = entityManager.find(Student.class, studentId);
+		Parent targetParent = entityManager.find(Parent.class, userId);
+		if (targetParent.getChildren().contains(targetStudent))
+			authorization = true;
+		if (!authorization)
+			return null;
+		return targetStudent.getGrades();
+	}
+
 }

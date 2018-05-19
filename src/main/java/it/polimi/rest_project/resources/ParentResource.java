@@ -14,6 +14,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import it.polimi.rest_project.entities.Appointment;
+import it.polimi.rest_project.entities.Grade;
 import it.polimi.rest_project.entities.Notification;
 import it.polimi.rest_project.entities.Payment;
 import it.polimi.rest_project.entities.PersonalData;
@@ -61,7 +62,7 @@ public class ParentResource {
 	public Response updateAppointment(@PathParam("id") String userId, @PathParam("appointmentId") String appointmentId,
 			@FormParam("year") String year, @FormParam("month") String month, @FormParam("day") String day) {
 		try {
-			parentService.updateParentAppointment(appointmentId,
+			parentService.updateParentAppointment(userId, appointmentId,
 					new SimpleDateFormat().parse(year + "-" + month + "-" + day));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -89,7 +90,7 @@ public class ParentResource {
 	@Path("appointments/{appointmentId}")
 	public Response deleteAppointment(@PathParam("id") String userId,
 			@PathParam("appointmentId") String appointmentId) {
-		parentService.deleteParentAppointment(appointmentId);
+		parentService.deleteParentAppointment(userId, appointmentId);
 		return Response.ok().build();
 	}
 
@@ -105,30 +106,30 @@ public class ParentResource {
 		parentService.payParentPayments(paymentId);
 		return Response.ok().build();
 	}
-	
+
 	@GET
 	@Path("notifications")
-	public List<Notification> getNotifications(@PathParam("id") String userId){
+	public List<Notification> getNotifications(@PathParam("id") String userId) {
 		return parentService.getParentNotifications(userId);
 	}
-	
+
 	@GET
 	@Path("students")
-	public List<Student> getStudents(@PathParam("id") String userId){
+	public List<Student> getStudents(@PathParam("id") String userId) {
 		return parentService.getParentStudents(userId);
 	}
-	
+
 	@GET
 	@Path("students/{studentId}")
-	public Student getStudent(@PathParam("id") String userId,@PathParam("studentId") String studentId) {
-		return parentService.getParentStudent(userId,studentId);
+	public Student getStudent(@PathParam("id") String userId, @PathParam("studentId") String studentId) {
+		return parentService.getParentStudent(userId, studentId);
 	}
-	
+
 	@PUT
 	@Path("students/{studentId}")
-	public Response updateStudentPersonalData(@PathParam("id") String userId,@PathParam("studentId") String studentId, @FormParam("name") String name,
-			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
-			@FormParam("day") String day) {
+	public Response updateStudentPersonalData(@PathParam("id") String userId, @PathParam("studentId") String studentId,
+			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") String year,
+			@FormParam("month") String month, @FormParam("day") String day) {
 
 		try {
 			PersonalData newPersonalData = new PersonalData(name, surname,
@@ -139,6 +140,12 @@ public class ParentResource {
 			e.printStackTrace();
 		}
 		return Response.ok().build();
+	}
+
+	@GET
+	@Path("students/{studentId}/grades")
+	public List<Grade> getGrades(@PathParam("id") String userId, @PathParam("studentId") String studentId) {
+		return parentService.getParentGrades(userId, studentId);
 	}
 
 }
