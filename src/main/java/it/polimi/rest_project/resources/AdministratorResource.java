@@ -171,4 +171,27 @@ public class AdministratorResource {
 		return Response.status(Response.Status.ACCEPTED);
 	}
 
+	@POST
+	@Path("administrators")
+	public ResponseBuilder createAdministrator(@PathParam("id") String id, @FormParam("name") String name,
+			@FormParam("surname") String surname, @FormParam("day") String day, @FormParam("month") String month,
+			@FormParam("year") String year) {
+		
+		Administrator admin = getAdminById(id);
+		Administrator adminToAdd = new Administrator();
+		PersonalData pdat = new PersonalData();
+		if (name == null || surname == null || admin == null)
+			return Response.status(Response.Status.BAD_REQUEST);
+		pdat.setName(name);
+		pdat.setSurname(surname);
+		try {
+			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
+		} catch (ParseException e) {
+			return Response.status(Response.Status.BAD_REQUEST);
+		}
+		adminToAdd.setPersonalData(pdat);
+		
+		return Response.status(Response.Status.ACCEPTED);
+	}
+	
 }
