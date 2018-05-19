@@ -1,8 +1,5 @@
 package it.polimi.rest_project.resources;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,84 +12,49 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import it.polimi.rest_project.entities.Administrator;
 import it.polimi.rest_project.entities.Classroom;
 import it.polimi.rest_project.entities.Parent;
-import it.polimi.rest_project.entities.PersonalData;
-import it.polimi.rest_project.entities.Student;
-import it.polimi.rest_project.entities.Teacher;
+import it.polimi.rest_project.services.AdministratorService;
 
 @Path("admins/{id}")
 public class AdministratorResource {
 
-	List<Administrator> administrators;
-
-	private Administrator getAdminById(String id) {
-		for (Administrator a : administrators) {
-			if (a.getUserId().equals(id))
-				return a;
-		}
-		return null;
-	}
+	private AdministratorService administratorService;
 
 	@GET
 	@Path("classrooms")
 	public List<Classroom> getClassrooms(@PathParam("id") String id) {
-		Administrator targetAdmin = getAdminById(id);
-		if (targetAdmin != null)
-			return targetAdmin.getClassrooms();
-		return null;
+		return administratorService.getAdminClassrooms();
 	}
 
 	@GET
 	@Path("classrooms/{classroomsId}")
 	public Classroom getClassroom(@PathParam("id") String id, @PathParam("classroomId") String classroomId) {
-		Administrator targetAdmin = getAdminById(classroomId);
-		for (Classroom c : targetAdmin.getClassrooms()) {
-			if (c.getClassroomId().equals(classroomId)) {
-				return c;
-			}
-		}
-		return null;
+		return administratorService.getAdminClassroom(classroomId);
 	}
 
 	@GET
 	@Path("parents")
 	public List<Parent> getParents(@PathParam("id") String id) {
-		Administrator targetAdmin = getAdminById(id);
-		if (targetAdmin != null)
-			return targetAdmin.getParents();
-		return null;
+		return administratorService.getAdminParents();
 	}
 
 	@POST
 	@Path("students")
 	public ResponseBuilder createStudent(@PathParam("id") String id, @FormParam("name") String name,
 			@FormParam("surname") String surname, @FormParam("day") String day, @FormParam("month") String month,
-			@FormParam("year") String year, @FormParam("parentIds") List<String> parentIds) {
-		Administrator admin = getAdminById(id);
-		if (admin == null || name == null || surname == null)
+			@FormParam("year") String year) {
+		if (!administratorService.createStudent(name, surname, day, month, year))
 			return Response.status(Response.Status.BAD_REQUEST);
-		Student studentToAdd = new Student();
-		PersonalData pdat = new PersonalData();
-		pdat.setName(name);
-		pdat.setSurname(surname);
-		try {
-			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
-		} catch (ParseException e) {
-			Response.status(Response.Status.BAD_REQUEST);
-		}
-		studentToAdd.setPersonalData(pdat);
-		for (Parent p : admin.getParents()) {
-			if (parentIds.contains(p.getUserId())) {
-				studentToAdd.getParents().add(p);
-				p.getChildren().add(studentToAdd);
-			}
-		}
-		// the administrator must add the parents before create the students
-		if (studentToAdd.getParents().isEmpty())
+		return Response.status(Response.Status.OK);
+	}
+
+	@PUT
+	@Path("parents/{parentId}")
+	public ResponseBuilder addStudentToParent(@PathParam("id") String id, @PathParam("parentId") String parentId,
+			@FormParam("studentId") String studentId) {
+		if (!administratorService.addStudentToParent(parentId, studentId))
 			return Response.status(Response.Status.BAD_REQUEST);
-		admin.getStudents().add(studentToAdd);
 		return Response.status(Response.Status.OK);
 	}
 
@@ -100,24 +62,8 @@ public class AdministratorResource {
 	@Path("classrooms/{classroomId}")
 	public ResponseBuilder addStudentToClass(@PathParam("id") String id, @PathParam("classroomId") String classroomId,
 			@FormParam("studentId") String studentId) {
-		Administrator targetAdministrator = getAdminById(id);
-		Student studentToAdd = null;
-		Classroom targetClassroom = null;
-		for (Student s : targetAdministrator.getStudents()) {
-			if (s.getUserId().equals(studentId)) {
-				studentToAdd = s;
-				break;
-			}
-		}
-		for (Classroom c : targetAdministrator.getClassrooms()) {
-			if (c.getClassroomId().equals(classroomId)) {
-				targetClassroom = c;
-				break;
-			}
-		}
-		if (targetAdministrator == null || studentToAdd == null || targetClassroom == null)
+		if (!administratorService.addStudentToClass(classroomId, studentId))
 			return Response.status(Response.Status.BAD_REQUEST);
-		targetClassroom.getStudents().add(studentToAdd);
 		return Response.status(Response.Status.OK);
 	}
 
@@ -126,20 +72,8 @@ public class AdministratorResource {
 	public ResponseBuilder createParent(@PathParam("id") String id, @FormParam("name") String name,
 			@FormParam("surname") String surname, @FormParam("day") String day, @FormParam("month") String month,
 			@FormParam("year") String year) {
-		Administrator admin = getAdminById(id);
-		Parent parentToAdd = new Parent();
-		PersonalData pdat = new PersonalData();
-		if (name == null || surname == null || admin == null)
+		if (!administratorService.createParent(name, surname, day, month, year))
 			return Response.status(Response.Status.BAD_REQUEST);
-		pdat.setName(name);
-		pdat.setSurname(surname);
-		try {
-			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
-		} catch (ParseException e) {
-			return Response.status(Response.Status.BAD_REQUEST);
-		}
-		parentToAdd.setPersonalData(pdat);
-		admin.getParents().add(parentToAdd);
 		return Response.status(Response.Status.OK);
 	}
 
@@ -148,27 +82,9 @@ public class AdministratorResource {
 	public ResponseBuilder createTeacher(@PathParam("id") String id, @FormParam("name") String name,
 			@FormParam("surname") String surname, @FormParam("day") String day, @FormParam("month") String month,
 			@FormParam("year") String year, @FormParam("mapClassSubject") Map<String, String> classIdSubject) {
-
-		Administrator admin = getAdminById(id);
-		Teacher teacherToAdd = new Teacher();
-		PersonalData pdat = new PersonalData();
-		if (name == null || surname == null || admin == null)
+		if (!administratorService.createTeacher(name, surname, day, month, year))
 			return Response.status(Response.Status.BAD_REQUEST);
-		pdat.setName(name);
-		pdat.setSurname(surname);
-		try {
-			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
-		} catch (ParseException e) {
-			return Response.status(Response.Status.BAD_REQUEST);
-		}
-		teacherToAdd.setPersonalData(pdat);
-		List<String> classroomsToAdd = new ArrayList<>(classIdSubject.keySet());
-		for(Classroom c : admin.getClassrooms()) {
-			if(classroomsToAdd.contains(c.getClassroomId())) {
-				teacherToAdd.getClassSubject().put(c, classIdSubject.get(c.getClassroomId()));
-			}
-		}
-		return Response.status(Response.Status.ACCEPTED);
+		return Response.status(Response.Status.OK);
 	}
 
 	@POST
@@ -176,22 +92,26 @@ public class AdministratorResource {
 	public ResponseBuilder createAdministrator(@PathParam("id") String id, @FormParam("name") String name,
 			@FormParam("surname") String surname, @FormParam("day") String day, @FormParam("month") String month,
 			@FormParam("year") String year) {
-		
-		Administrator admin = getAdminById(id);
-		Administrator adminToAdd = new Administrator();
-		PersonalData pdat = new PersonalData();
-		if (name == null || surname == null || admin == null)
+		if (!administratorService.createAdministrator(name, surname, day, month, year))
 			return Response.status(Response.Status.BAD_REQUEST);
-		pdat.setName(name);
-		pdat.setSurname(surname);
-		try {
-			pdat.setDateOfBirth(new SimpleDateFormat().parse(year + "-" + month + "-" + day));
-		} catch (ParseException e) {
+		return Response.status(Response.Status.OK);
+	}
+
+	@POST
+	@Path("parents/{parentId}/payments")
+	public ResponseBuilder createPaymentForParent(@PathParam("id") String id, @PathParam("parentId") String parentId,
+			@FormParam("amount") String amount, @FormParam("reason") String reason, @FormParam("day") String day, @FormParam("month") String month,
+			@FormParam("year") String year) {
+		if(!administratorService.createPaymentForParent(parentId, amount, reason, day, month, year))
 			return Response.status(Response.Status.BAD_REQUEST);
-		}
-		adminToAdd.setPersonalData(pdat);
-		
-		return Response.status(Response.Status.ACCEPTED);
+		return Response.status(Response.Status.OK);
 	}
 	
+	@POST
+	@Path("notifications")
+	public ResponseBuilder createNotification(@PathParam("id") String id, @FormParam("userId") String userId, @FormParam("text") String text) {
+		if(!administratorService.createNotification(userId, text))
+			return Response.status(Response.Status.BAD_REQUEST);
+		return Response.status(Response.Status.OK);
+	}
 }
