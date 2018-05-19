@@ -3,16 +3,18 @@ package it.polimi.rest_project.services;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-
 import it.polimi.rest_project.entities.Appointment;
-import it.polimi.rest_project.entities.Parent;
-import it.polimi.rest_project.entities.Teacher;
+import it.polimi.rest_project.entities.Payment;
 
 public class ParentService extends UserService {
 
+	private AppointmentService appointmentService;
+	private PaymentService paymentService;
+
 	public ParentService() {
 		super();
+		appointmentService = new AppointmentService(entityManager);
+		paymentService = new PaymentService(entityManager);
 	}
 
 	/**
@@ -23,34 +25,27 @@ public class ParentService extends UserService {
 	 * @return
 	 */
 	public List<Appointment> getParentAppointments(String userId) {
-		Query query = entityManager.createQuery("Select a from Appointment a where a.parent=:param");
-		query.setParameter("param", entityManager.find(Parent.class, userId));
-		return query.getResultList();
+		return appointmentService.getAppointments(userId);
 	}
 
-	public boolean updateParentAppointment(Appointment appointment) {
-		String appointmentId = appointment.getAppointmentId();
-		Date newDate = appointment.getDate();
-		if (newDate == null)
-			return false;
-		entityManager.getTransaction().begin();
-		appointment = entityManager.find(Appointment.class, appointmentId);
-		appointment.setDate(newDate);
-		entityManager.persist(appointment);
-		entityManager.getTransaction().commit();
-		return true;
+	public boolean updateParentAppointment(String appointmentId, Date newDate) {
+		return appointmentService.updateAppointment(appointmentId, newDate);
 	}
 
 	public boolean addParentAppointment(String userId, String teacherId, Date date) {
-		if (userId == null || teacherId == null || date == null)
-			return false;
-		Parent targetParent = entityManager.find(Parent.class, userId);
-		Teacher targetTeacher = entityManager.find(Teacher.class, teacherId);
-		Appointment newAppointment = new Appointment(targetParent, targetTeacher, date);
-		entityManager.getTransaction().begin();
-		entityManager.persist(newAppointment);
-		entityManager.getTransaction().commit();
-		return true;
+		return appointmentService.addAppointment(userId, teacherId, date);
+	}
+
+	public boolean deleteParentAppointment(String appointmentId) {
+		return appointmentService.deleteAppointment(appointmentId);
+	}
+
+	public List<Payment> getParentPayments(String userId) {
+		return paymentService.getPayments(userId);
+	}
+
+	public boolean payParentPayments(String paymentId) {
+		return paymentService.payPayment(paymentId);
 	}
 
 }
