@@ -1,9 +1,16 @@
 package it.polimi.rest_project.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+
+@Entity
 public abstract class User {
 
-	private PersonalData personalData;
+	@Id
 	private String userId;
+	@JoinColumn
+	private PersonalData personalData;
 
 	public PersonalData getPersonalData() {
 		return personalData;

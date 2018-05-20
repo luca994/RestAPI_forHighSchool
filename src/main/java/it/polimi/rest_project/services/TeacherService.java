@@ -52,7 +52,9 @@ public class TeacherService extends UserService {
 			return false;
 		Grade newGrade = new Grade(subject, grade);
 		entityManager.getTransaction().begin();
+		Student targetStudent = entityManager.find(Student.class,studentId);
 		entityManager.persist(newGrade);
+		targetStudent.getGrades().add(newGrade);
 		entityManager.getTransaction().commit();
 		return true;
 	}

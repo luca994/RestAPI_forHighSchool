@@ -1,14 +1,18 @@
 package it.polimi.rest_project.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PersonalData {
+public class PersonalData implements Serializable {
 
-	String name;
-	String surname;
-	Date dateOfBirth;
-	
-	public PersonalData() {}
+
+	private static final long serialVersionUID = -2265801665743184194L;
+	private String name;
+	private String surname;
+	private Date dateOfBirth;
+
+	public PersonalData() {
+	}
 
 	public PersonalData(String name, String surname, Date dateOfBirth) {
 		this.name = name;

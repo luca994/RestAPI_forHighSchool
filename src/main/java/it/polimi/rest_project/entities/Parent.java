@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+
+@Entity
 public class Parent extends User {
 
+	@JoinColumn
 	private List<Student> children;
 
 	public Parent(PersonalData personalData) {

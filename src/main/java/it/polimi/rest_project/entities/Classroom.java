@@ -4,9 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+
+@Entity
 public class Classroom {
 
+	@Id
 	private String classroomId;
+	@JoinTable
 	private List<Student> students;
 
 	public Classroom() {

@@ -2,10 +2,20 @@ package it.polimi.rest_project.entities;
 
 import java.util.Date;
 
-public class Notification {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 
+@Entity
+public class Notification {
+	@Id
+	private String id;
+	@Column
 	private String text;
+	@Column
 	private Date date;
+	@JoinColumn
 	private User user;
 
 	public String getText() {

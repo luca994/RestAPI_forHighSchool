@@ -3,11 +3,21 @@ package it.polimi.rest_project.entities;
 import java.util.Date;
 import java.util.Random;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+
+@Entity
 public class Appointment {
 
+	@Id
 	private String appointmentId;
+	@Column
 	private Date date;
+	@JoinColumn
 	private Teacher teacher;
+	@JoinColumn
 	private Parent parent;
 
 

@@ -9,7 +9,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 @ApplicationPath("a")
 public class Back2School extends ResourceConfig {
 
-	protected static final EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("back2schoolDB");
+	protected static final EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("back2schooldb");
 
 	public Back2School() {
 		packages("it.polimi.services");

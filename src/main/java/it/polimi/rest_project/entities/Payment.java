@@ -3,13 +3,25 @@ package it.polimi.rest_project.entities;
 import java.util.Date;
 import java.util.Random;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+
+@Entity
 public class Payment {
 
+	@Id
 	private String paymentId;
+	@Column
 	private Integer amount;
+	@Column
 	private Date date;
+	@Column
 	private String reason;
+	@JoinColumn
 	private User user;
+	@Column
 	private boolean done;
 
 	public Payment() {

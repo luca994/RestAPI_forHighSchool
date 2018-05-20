@@ -2,12 +2,25 @@ package it.polimi.rest_project.entities;
 
 import java.time.DayOfWeek;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+
+@Entity
 public class Lecture {
 
+	@Id
+	private String id;
+	@JoinColumn
 	private Classroom classRoom;
+	@Column
 	private DayOfWeek day;
+	@Column
 	private Integer hour;
+	@JoinColumn
 	private Teacher teacher;
+	@Column
 	private String subject;
 	
 	public Lecture() {}

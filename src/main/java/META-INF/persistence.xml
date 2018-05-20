@@ -3,20 +3,32 @@
 	xmlns="http://xmlns.jcp.org/xml/ns/persistence"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="back2schoolDB"
+	<persistence-unit name="back2schooldb"
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<jta-data-source>JDBCRESOURCE</jta-data-source>
+		
+		<class>it.polimi.rest_project.entities.Administrator</class>
+		<class>it.polimi.rest_project.entities.Appointment</class>
+		<class>it.polimi.rest_project.entities.Classroom</class>
+		<class>it.polimi.rest_project.entities.Grade</class>
+		<class>it.polimi.rest_project.entities.Lecture</class>
+		<class>it.polimi.rest_project.entities.Notification</class>
+		<class>it.polimi.rest_project.entities.Parent</class>
+		<class>it.polimi.rest_project.entities.Payment</class>
+		<class>it.polimi.rest_project.entities.Student</class>
+		<class>it.polimi.rest_project.entities.Teacher</class>
+		<class>it.polimi.rest_project.entities.User</class>
 
 		<properties>
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:mysql://localhost:3306/test" />
+				value="jdbc:mysql://localhost:3306/back2schooldb" />
 			<property name="javax.persistence.jdbc.user" value="root" />
 			<property name="javax.persistence.jdbc.password"
 				value="project94" />
 			<property
 				name="javax.persistence.schema-generation.database.action"
-				value="create" />
+				value="drop_and_create" />
 		</properties>
 	</persistence-unit>
 </persistence>

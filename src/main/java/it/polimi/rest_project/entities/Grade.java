@@ -1,9 +1,17 @@
 package it.polimi.rest_project.entities;
 
-public class Grade {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
+@Entity
+public class Grade{
+
+	@Id
 	private String gradeId;
+	@Column
 	private String subject;
+	@Column
 	private float mark;
 
 	public Grade() {
@@ -23,16 +31,8 @@ public class Grade {
 		this.subject = subject;
 	}
 
-	public String getGradeId() {
-		return gradeId;
-	}
-
 	public float getMark() {
 		return mark;
-	}
-
-	public void setGradeId(String gradeId) {
-		this.gradeId = gradeId;
 	}
 
 	public void setMark(float mark) {
