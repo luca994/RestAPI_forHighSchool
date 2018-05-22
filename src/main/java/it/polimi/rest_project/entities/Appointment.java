@@ -7,8 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "Appointments")
 public class Appointment {
 
 	@Id
@@ -20,10 +22,9 @@ public class Appointment {
 	@JoinColumn
 	private Parent parent;
 
-
 	public Appointment(Parent parent, Teacher teacher, Date date) {
-		Integer random = new Random().nextInt();
-		appointmentId = random.toString();
+		Long random = new Random().nextLong();
+		this.appointmentId = Long.toUnsignedString(random);
 		this.parent = parent;
 		this.teacher = teacher;
 		this.date = date;
@@ -37,8 +38,8 @@ public class Appointment {
 	}
 
 	public Appointment() {
-		Integer random = new Random().nextInt();
-		appointmentId = random.toString();
+		Long random = new Random().nextLong();
+		this.appointmentId = Long.toUnsignedString(random);
 	}
 
 	public Date getDate() {

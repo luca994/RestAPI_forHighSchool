@@ -8,8 +8,8 @@ import javax.persistence.Entity;
 public class Teacher extends User {
 
 	public Teacher() {
-		Integer random = new Random().nextInt();
-		this.setUserId(random.toString());
+		Long random = new Random().nextLong();
+		this.setUserId(Long.toUnsignedString(random));
 	}
 
 }

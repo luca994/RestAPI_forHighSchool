@@ -15,7 +15,7 @@ public abstract class UserService {
 	protected EntityManager entityManager;
 
 	public UserService() {
-		entityManager = Back2School.emfactory.createEntityManager();
+		entityManager = Back2School.getEntityManager();
 	}
 
 	/**
@@ -50,14 +50,16 @@ public abstract class UserService {
 		entityManager.persist(userToUpdate);
 		entityManager.getTransaction().commit();
 	}
-	
-	public List<Teacher> getTeachers(){
-		Query query = entityManager.createQuery("Select t.userId, t.personalData.name, t.personalData.surname from Teacher t");
+
+	public List<Teacher> getTeachers() {
+		Query query = entityManager
+				.createQuery("Select t.userId, t.personalData.name, t.personalData.surname from Teacher t");
 		return query.getResultList();
 	}
-	
-	public List<Parent> getParents(){
-		Query query = entityManager.createQuery("Select p.userId, t.personalData.name, t.personalData.surname from Parent p");
+
+	public List<Parent> getParents() {
+		Query query = entityManager
+				.createQuery("Select p.userId, p.personalData.name, p.personalData.surname from Parent p");
 		return query.getResultList();
 	}
 }

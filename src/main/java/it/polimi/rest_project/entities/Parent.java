@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 @Entity
 public class Parent extends User {
 
+
 	@JoinColumn
 	private List<Student> children;
 
@@ -19,8 +20,8 @@ public class Parent extends User {
 
 	public Parent() {
 		children = new ArrayList<>();
-		Integer random = new Random().nextInt();
-		this.setUserId(random.toString());
+		Long random = new Random().nextLong();
+		this.setUserId(Long.toUnsignedString(random));
 	}
 
 	public List<Student> getChildren() {

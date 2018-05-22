@@ -1,11 +1,15 @@
 package it.polimi.rest_project.entities;
 
+import java.util.Random;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-public class Grade{
+@Table(name = "Grades")
+public class Grade {
 
 	@Id
 	private String gradeId;
@@ -15,12 +19,16 @@ public class Grade{
 	private float mark;
 
 	public Grade() {
+		Long random = new Random().nextLong();
+		this.gradeId = Long.toUnsignedString(random);
 	}
 
 	public Grade(String subject, float value) {
 		super();
 		this.subject = subject;
 		this.mark = value;
+		Long random = new Random().nextLong();
+		this.gradeId = Long.toUnsignedString(random);
 	}
 
 	public String getSubject() {

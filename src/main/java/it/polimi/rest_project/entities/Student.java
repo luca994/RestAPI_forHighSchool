@@ -15,8 +15,8 @@ public class Student extends User {
 
 	public Student() {
 		grades = new ArrayList<Grade>();
-		Integer random = new Random().nextInt();
-		this.setUserId(random.toString());
+		Long random = new Random().nextLong();
+		this.setUserId(Long.toUnsignedString(random));
 	}
 
 	public List<Grade> getGrades() {

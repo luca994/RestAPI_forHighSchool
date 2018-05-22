@@ -3,8 +3,10 @@ package it.polimi.rest_project.entities;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "Users")
 public abstract class User {
 
 	@Id
@@ -18,6 +20,7 @@ public abstract class User {
 
 	public void setPersonalData(PersonalData personalData) {
 		this.personalData = personalData;
+		this.userId=personalData.getPersonalDataid();
 	}
 
 	public String getUserId() {

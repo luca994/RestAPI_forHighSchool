@@ -1,13 +1,16 @@
 package it.polimi.rest_project.entities;
 
 import java.util.Date;
+import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "Notifications")
 public class Notification {
 	@Id
 	private String id;
@@ -17,6 +20,11 @@ public class Notification {
 	private Date date;
 	@JoinColumn
 	private User user;
+
+	public Notification() {
+		Long random = new Random().nextLong();
+		this.id = Long.toUnsignedString(random);
+	}
 
 	public String getText() {
 		return text;

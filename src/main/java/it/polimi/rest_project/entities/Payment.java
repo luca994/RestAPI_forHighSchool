@@ -7,8 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "Payments")
 public class Payment {
 
 	@Id
@@ -25,8 +27,8 @@ public class Payment {
 	private boolean done;
 
 	public Payment() {
-		Integer random = new Random().nextInt();
-		paymentId = random.toString();
+		Long random = new Random().nextLong();
+		this.paymentId = Long.toUnsignedString(random);
 	}
 
 	public Date getDate() {

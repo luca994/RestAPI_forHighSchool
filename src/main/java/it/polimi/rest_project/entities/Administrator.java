@@ -8,8 +8,12 @@ import javax.persistence.Entity;
 public class Administrator extends User {
 
 	public Administrator() {
-		Integer random = new Random().nextInt();
-		this.setUserId(random.toString());
+		Long random = new Random().nextLong();
+		this.setUserId(Long.toUnsignedString(random));
+	}
+	
+	public Administrator(String userId) {
+		this.setUserId(userId);
 	}
 
 }

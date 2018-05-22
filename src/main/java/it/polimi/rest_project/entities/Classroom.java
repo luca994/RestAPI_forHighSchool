@@ -7,19 +7,22 @@ import java.util.Random;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="Classrooms")
 public class Classroom {
 
 	@Id
 	private String classroomId;
-	@JoinTable
+
+	@JoinTable(name = "Classroom_and_students")
 	private List<Student> students;
 
 	public Classroom() {
 		students = new ArrayList<>();
-		Integer random = new Random().nextInt();
-		classroomId = random.toString();
+		Long random = new Random().nextLong();
+		this.classroomId = Long.toUnsignedString(random);
 	}
 
 	public String getClassroomId() {

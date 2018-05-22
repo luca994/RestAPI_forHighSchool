@@ -1,13 +1,16 @@
 package it.polimi.rest_project.entities;
 
 import java.time.DayOfWeek;
+import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="Lectures")
 public class Lecture {
 
 	@Id
@@ -23,9 +26,14 @@ public class Lecture {
 	@Column
 	private String subject;
 	
-	public Lecture() {}
+	public Lecture() {
+		Long random = new Random().nextLong();
+		this.id = Long.toUnsignedString(random);
+	}
 	
 	public Lecture(Classroom classRoom, DayOfWeek day, Integer hour, Teacher teacher, String subject) {
+		Long random = new Random().nextLong();
+		this.id = Long.toUnsignedString(random);
 		this.classRoom = classRoom;
 		this.day = day;
 		this.hour = hour;
