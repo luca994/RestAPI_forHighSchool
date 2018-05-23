@@ -10,13 +10,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Lectures")
+@Table(name = "Lectures")
 public class Lecture {
 
 	@Id
 	private String id;
-	@JoinColumn
-	private Classroom classRoom;
 	@Column
 	private DayOfWeek day;
 	@Column
@@ -25,52 +23,94 @@ public class Lecture {
 	private Teacher teacher;
 	@Column
 	private String subject;
-	
+
 	public Lecture() {
 		Long random = new Random().nextLong();
 		this.id = Long.toUnsignedString(random);
 	}
-	
+
 	public Lecture(Classroom classRoom, DayOfWeek day, Integer hour, Teacher teacher, String subject) {
 		Long random = new Random().nextLong();
 		this.id = Long.toUnsignedString(random);
-		this.classRoom = classRoom;
 		this.day = day;
 		this.hour = hour;
 		this.teacher = teacher;
 		this.subject = subject;
 	}
-	
-	public Classroom getClassRoom() {
-		return classRoom;
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
 	}
+
+	/**
+	 * @return the day
+	 */
 	public DayOfWeek getDay() {
 		return day;
 	}
+
+	/**
+	 * @return the hour
+	 */
 	public Integer getHour() {
 		return hour;
 	}
+
+	/**
+	 * @return the teacher
+	 */
 	public Teacher getTeacher() {
 		return teacher;
 	}
+
+	/**
+	 * @return the subject
+	 */
 	public String getSubject() {
 		return subject;
 	}
-	public void setClassRoom(Classroom classRoom) {
-		this.classRoom = classRoom;
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
+
+	/**
+	 * @param day
+	 *            the day to set
+	 */
 	public void setDay(DayOfWeek day) {
 		this.day = day;
 	}
+
+	/**
+	 * @param hour
+	 *            the hour to set
+	 */
 	public void setHour(Integer hour) {
 		this.hour = hour;
 	}
+
+	/**
+	 * @param teacher
+	 *            the teacher to set
+	 */
 	public void setTeacher(Teacher teacher) {
 		this.teacher = teacher;
 	}
+
+	/**
+	 * @param subject
+	 *            the subject to set
+	 */
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-	
-	
+
 }

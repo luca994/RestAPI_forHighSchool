@@ -42,52 +42,64 @@ public class Appointment {
 		this.appointmentId = Long.toUnsignedString(random);
 	}
 
-	public Date getDate() {
-		return date;
-	}
-
-	public Teacher getTeacher() {
-		return teacher;
-	}
-
-	public Parent getParent() {
-		return parent;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public void setTeacher(Teacher teacher) {
-		this.teacher = teacher;
-	}
-
-	public void setParent(Parent parent) {
-		this.parent = parent;
-	}
-
+	/**
+	 * @return the appointmentId
+	 */
 	public String getAppointmentId() {
 		return appointmentId;
 	}
 
+	/**
+	 * @return the date
+	 */
+	public Date getDate() {
+		return date;
+	}
+
+	/**
+	 * @return the teacher
+	 */
+	public Teacher getTeacher() {
+		return teacher;
+	}
+
+	/**
+	 * @return the parent
+	 */
+	public Parent getParent() {
+		return parent;
+	}
+
+	/**
+	 * @param appointmentId
+	 *            the appointmentId to set
+	 */
 	public void setAppointmentId(String appointmentId) {
 		this.appointmentId = appointmentId;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Appointment other = (Appointment) obj;
-		if (appointmentId == null) {
-			if (other.appointmentId != null)
-				return false;
-		} else if (!appointmentId.equals(other.appointmentId))
-			return false;
-		return true;
+	/**
+	 * @param date
+	 *            the date to set
+	 */
+	public void setDate(Date date) {
+		this.date = date;
 	}
+
+	/**
+	 * @param teacher
+	 *            the teacher to set
+	 */
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
+	}
+
+	/**
+	 * @param parent
+	 *            the parent to set
+	 */
+	public void setParent(Parent parent) {
+		this.parent = parent;
+	}
+
 }

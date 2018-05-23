@@ -1,9 +1,5 @@
 package it.polimi.rest_project.resources;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -11,16 +7,21 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import it.polimi.rest_project.entities.Appointment;
 import it.polimi.rest_project.entities.Classroom;
-import it.polimi.rest_project.entities.PersonalData;
+import it.polimi.rest_project.entities.Grade;
+import it.polimi.rest_project.entities.Teacher;
 import it.polimi.rest_project.services.TeacherService;
 
 @Path("teachers/{id}")
 public class TeacherResource {
 
+	@Context
+	private UriInfo uriInfo;
 	private TeacherService teacherService;
 
 	public TeacherResource() {
@@ -28,8 +29,8 @@ public class TeacherResource {
 	}
 
 	@GET
-	public PersonalData getPersonalData(@PathParam("id") String teacherId) {
-		return teacherService.getPersonalData(teacherId);
+	public Teacher getPersonalData(@PathParam("id") String userId) {
+		return teacherService.getTeacher(userId);
 	}
 
 	@PUT
@@ -37,21 +38,11 @@ public class TeacherResource {
 			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
 			@FormParam("day") String day) {
 
-		try {
-			PersonalData newPersonalData = new PersonalData(name, surname,
-					new SimpleDateFormat().parse(year + "-" + month + "-" + day));
-			teacherService.updatePersonalData(teacherId, newPersonalData);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.ok().build();
-	}
+		if (teacherService.updateUserData(teacherId, name, surname, day, month, year))
+			return Response.status(Response.Status.ACCEPTED).build();
+		else
+			return Response.status(Response.Status.BAD_REQUEST).build();
 
-	@GET
-	@Path("classrooms")
-	public List<Classroom> getClassrooms(@PathParam("id") String teacherId) {
-		return teacherService.getClassrooms(teacherId);
 	}
 
 	@GET
@@ -60,12 +51,18 @@ public class TeacherResource {
 		return teacherService.getClassroom(classroomId);
 	}
 
+	@GET
+	@Path("students/{studentId}/grades/{gradeId}")
+	public Grade getGrade(@PathParam("id") String teacherId, @PathParam("gradeId") String gradeId) {
+		return teacherService.getGrade(teacherId, gradeId);
+	}
+
 	@POST
 	@Path("students/{studentId}/grades")
 	public Response addStudentGrade(@PathParam("id") String teacherId, @PathParam("studentId") String studentId,
 			@FormParam("subject") String subject, @FormParam("grade") float grade) {
 		teacherService.addGrade(teacherId, studentId, subject, grade);
-		return Response.ok().build();
+		return Response.status(Response.Status.ACCEPTED).build();
 	}
 
 	@PUT
@@ -73,27 +70,24 @@ public class TeacherResource {
 	public Response modifyStudentGrade(@PathParam("id") String teacherId, @PathParam("studentId") String studentId,
 			@PathParam("gradeId") String gradeId, @FormParam("grade") float newGrade) {
 		teacherService.modifyGrade(teacherId, studentId, gradeId, newGrade);
-		return Response.ok().build();
+		return Response.status(Response.Status.ACCEPTED).build();
 	}
 
 	@GET
-	@Path("appointments")
-	public List<Appointment> getAppointments(@PathParam("id") String teacherId) {
-		return teacherService.getTeacherAppointments(teacherId);
+	@Path("appointments/{appointmentId}")
+	public Appointment getAppointment(@PathParam("id") String teacherId,
+			@PathParam("appointmentId") String appointmentId) {
+		return teacherService.getTeacherAppointment(teacherId, appointmentId);
 	}
 
 	@PUT
 	@Path("appointments/{appointmentId}")
 	public Response updateAppointment(@PathParam("id") String userId, @PathParam("appointmentId") String appointmentId,
 			@FormParam("year") String year, @FormParam("month") String month, @FormParam("day") String day) {
-		try {
-			teacherService.updateTeacherAppointment(userId, appointmentId,
-					new SimpleDateFormat().parse(year + "-" + month + "-" + day));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.ok().build();
+		if (teacherService.updateTeacherAppointment(userId, appointmentId, day, month, year))
+			return Response.status(Response.Status.ACCEPTED).build();
+		else
+			return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 	@POST
@@ -101,22 +95,20 @@ public class TeacherResource {
 	public Response addAppointment(@PathParam("id") String userId, @FormParam("year") String year,
 			@FormParam("month") String month, @FormParam("day") String day, @FormParam("parentId") String parentId) {
 
-		try {
-			teacherService.addTeacherAppointment(userId, parentId,
-					new SimpleDateFormat().parse(year + "-" + month + "-" + day));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.ok().build();
+		if (teacherService.addTeacherAppointment(parentId, userId, day, month, year,uriInfo.getBaseUri().toString()))
+			return Response.status(Response.Status.ACCEPTED).build();
+		else
+			return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 	@DELETE
 	@Path("appointments/{appointmentId}")
 	public Response deleteAppointment(@PathParam("id") String userId,
 			@PathParam("appointmentId") String appointmentId) {
-		teacherService.deleteTeacherAppointment(userId, appointmentId);
-		return Response.ok().build();
+		if (teacherService.deleteTeacherAppointment(userId, appointmentId))
+			return Response.status(Response.Status.ACCEPTED).build();
+		else
+			return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 }

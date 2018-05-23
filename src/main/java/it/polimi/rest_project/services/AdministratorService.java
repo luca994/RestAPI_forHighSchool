@@ -5,15 +5,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.ws.rs.core.UriInfo;
+
 import it.polimi.rest_project.entities.Administrator;
 import it.polimi.rest_project.entities.Classroom;
+import it.polimi.rest_project.entities.Link;
 import it.polimi.rest_project.entities.Notification;
 import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.entities.Payment;
-import it.polimi.rest_project.entities.PersonalData;
 import it.polimi.rest_project.entities.Student;
 import it.polimi.rest_project.entities.Teacher;
 import it.polimi.rest_project.entities.User;
+import it.polimi.rest_project.resources.ParentResource;
 
 public class AdministratorService extends UserService {
 
@@ -24,6 +27,22 @@ public class AdministratorService extends UserService {
 		classroomService = new ClassroomService(entityManager);
 	}
 
+	public Administrator getAdmin(String adminId) {
+		return entityManager.find(Administrator.class, adminId);
+	}
+
+	public Student getStudent(String studentId) {
+		return entityManager.find(Student.class, studentId);
+	}
+
+	public Parent getParent(String parentId) {
+		return entityManager.find(Parent.class, parentId);
+	}
+
+	public Teacher getTeacher(String teacherId) {
+		return entityManager.find(Teacher.class, teacherId);
+	}
+
 	public List<Classroom> getAdminClassrooms() {
 		return classroomService.getClassrooms();
 	}
@@ -32,38 +51,35 @@ public class AdministratorService extends UserService {
 		return classroomService.getClassroom(classroomId);
 	}
 
+	public List<Student> getAdminStudents() {
+		return getStudents();
+	}
+
 	public List<Parent> getAdminParents() {
 		return getParents();
 	}
 
+	public List<Administrator> getAdminAdministrators() {
+		return getAdmins();
+	}
+
+	public List<Teacher> getAdminTeachers() {
+		return getTeachers();
+	}
+
 	public boolean createStudent(String name, String surname, String day, String month, String year) {
-		if (name == null || surname == null)
+		Student newStudent = new Student();
+		if (name == null || surname == null || day == null || month == null || year == null)
 			return false;
-		Student studentToAdd = new Student();
-		PersonalData pdat = new PersonalData();
-		pdat.setName(name);
-		pdat.setSurname(surname);
+		newStudent.setName(name);
+		newStudent.setSurname(surname);
 		try {
-			pdat.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
+			newStudent.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
 		} catch (ParseException e) {
 			return false;
 		}
-		studentToAdd.setPersonalData(pdat);
 		entityManager.getTransaction().begin();
-		entityManager.persist(pdat);
-		entityManager.persist(studentToAdd);
-		entityManager.getTransaction().commit();
-		return true;
-	}
-
-	public boolean addStudentToParent(String parentId, String studentId) {
-		Parent targetParent = entityManager.find(Parent.class, parentId);
-		Student targetStudent = entityManager.find(Student.class, studentId);
-		if (targetParent == null || targetStudent == null)
-			return false;
-		targetParent.getChildren().add(targetStudent);
-		entityManager.getTransaction().begin();
-		entityManager.persist(targetParent);
+		entityManager.persist(newStudent);
 		entityManager.getTransaction().commit();
 		return true;
 	}
@@ -80,69 +96,110 @@ public class AdministratorService extends UserService {
 		return true;
 	}
 
-	public boolean createParent(String name, String surname, String day, String month, String year) {
-		if (name == null || surname == null)
+	public boolean addStudentToParent(String parentId, String studentId, UriInfo uriInfo) {
+		Parent targetParent = entityManager.find(Parent.class, parentId);
+		Student targetStudent = entityManager.find(Student.class, studentId);
+		if (targetParent == null || targetStudent == null)
 			return false;
-		Parent parentToAdd = new Parent();
-		PersonalData pdat = new PersonalData();
-		pdat.setName(name);
-		pdat.setSurname(surname);
-		try {
-			pdat.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
-		} catch (ParseException e) {
-			System.out.println("Error PARSING!");
-			return false;
-		}
-		parentToAdd.setPersonalData(pdat);
+		Link link = new Link();
+		link.setRel("children");
+		link.setUri(uriInfo.getBaseUriBuilder().path(ParentResource.class).path(targetParent.getUserId())
+				.path("students").path(studentId).build().toString());
+		targetParent.getResources().add(link);
+		targetStudent.getParents().add(targetParent);
 		entityManager.getTransaction().begin();
-		entityManager.persist(pdat);
-		entityManager.persist(parentToAdd);
+		entityManager.persist(targetStudent);
+		entityManager.persist(targetParent);
 		entityManager.getTransaction().commit();
 		return true;
+	}
+
+	public boolean createParent(String name, String surname, String day, String month, String year) {
+		Parent newParent = new Parent();
+		if (name == null || surname == null || day == null || month == null || year == null)
+			return false;
+		newParent.setName(name);
+		newParent.setSurname(surname);
+		try {
+			newParent.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
+		} catch (ParseException e) {
+			return false;
+		}
+		entityManager.getTransaction().begin();
+		entityManager.persist(newParent);
+		entityManager.getTransaction().commit();
+		return true;
+	}
+
+	public boolean createAdministrator(String name, String surname, String day, String month, String year,
+			String uriInfo) {
+		Administrator newAdministrator = new Administrator();
+		if (name == null || surname == null || day == null || month == null || year == null)
+			return false;
+		newAdministrator.setName(name);
+		newAdministrator.setSurname(surname);
+		try {
+			newAdministrator.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
+		} catch (ParseException e) {
+			return false;
+		}
+		setAdministratorResources(newAdministrator, uriInfo);
+		entityManager.getTransaction().begin();
+		entityManager.persist(newAdministrator);
+		entityManager.getTransaction().commit();
+		return true;
+	}
+
+	private void setAdministratorResources(Administrator admin, String uriInfo) {
+		Link link = new Link();
+		link.setRel("students");
+		link.setUri(uriInfo + "admins" + "/" + admin.getUserId() + "/" + "students");
+		admin.getResources().add(link);
+		link = new Link();
+		link.setRel("parents");
+		link.setUri(uriInfo + "admins" + "/" + admin.getUserId() + "/" + "parents");
+		admin.getResources().add(link);
+		link = new Link();
+		link.setRel("teachers");
+		link.setUri(uriInfo + "admins" + "/" + admin.getUserId() + "/" + "teachers");
+		admin.getResources().add(link);
+		link = new Link();
+		link.setRel("administrators");
+		link.setUri(uriInfo + "admins" + "/" + admin.getUserId() + "/" + "administrators");
+		admin.getResources().add(link);
+		link = new Link();
+		link.setRel("classrooms");
+		link.setUri(uriInfo + "admins" + "/" + admin.getUserId() + "/" + "classrooms");
+		admin.getResources().add(link);
+		link = new Link();
+		link.setRel("notifications");
+		link.setUri(uriInfo + "admins" + "/" + admin.getUserId() + "/" + "notifications");
+		admin.getResources().add(link);
+		link = new Link();
+		link.setRel("payments");
+		link.setUri(uriInfo + "admins" + "/" + admin.getUserId() + "/" + "payments");
+		admin.getResources().add(link);
 	}
 
 	public boolean createTeacher(String name, String surname, String day, String month, String year) {
-		if (name == null || surname == null)
+		Teacher newTeacher = new Teacher();
+		if (name == null || surname == null || day == null || month == null || year == null)
 			return false;
-		Teacher teacherToAdd = new Teacher();
-		PersonalData pdat = new PersonalData();
-		pdat.setName(name);
-		pdat.setSurname(surname);
+		newTeacher.setName(name);
+		newTeacher.setSurname(surname);
 		try {
-			pdat.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
+			newTeacher.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
 		} catch (ParseException e) {
 			return false;
 		}
-		teacherToAdd.setPersonalData(pdat);
 		entityManager.getTransaction().begin();
-		entityManager.persist(pdat);
-		entityManager.persist(teacherToAdd);
+		entityManager.persist(newTeacher);
 		entityManager.getTransaction().commit();
 		return true;
 	}
 
-	public boolean createAdministrator(String name, String surname, String day, String month, String year) {
-		if (name == null || surname == null)
-			return false;
-		Administrator administratorToAdd = new Administrator();
-		PersonalData pdat = new PersonalData();
-		pdat.setName(name);
-		pdat.setSurname(surname);
-		try {
-			pdat.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
-		} catch (ParseException e) {
-			return false;
-		}
-		administratorToAdd.setPersonalData(pdat);
-		entityManager.getTransaction().begin();
-		entityManager.persist(pdat);
-		entityManager.persist(administratorToAdd);
-		entityManager.getTransaction().commit();
-		return true;
-	}
-
-	public boolean createPaymentForParent(String parentId, String amount, String reason, String day, String month,
-			String year) {
+	public boolean createPayment(String parentId, String amount, String reason, String day, String month, String year,
+			String uriInfo) {
 		Parent targetParent = entityManager.find(Parent.class, parentId);
 		if (targetParent == null || amount == null || reason == null)
 			return false;
@@ -156,13 +213,19 @@ public class AdministratorService extends UserService {
 		} catch (ParseException e) {
 			return false;
 		}
+		Link link = new Link();
+		link.setRel("payment");
+		link.setUri(uriInfo + "parents" + "/" + targetParent.getUserId() + "/" + "payments" + "/"
+				+ newPayment.getPaymentId());
+		targetParent.getResources().add(link);
 		entityManager.getTransaction().begin();
 		entityManager.persist(newPayment);
+		entityManager.persist(targetParent);
 		entityManager.getTransaction().commit();
 		return true;
 	}
 
-	public boolean createNotification(String userId, String text) {
+	public boolean createNotification(String userId, String text, String uriInfo) {
 		User targetUser = entityManager.find(User.class, userId);
 		if (targetUser == null || text == null)
 			return false;
@@ -170,8 +233,14 @@ public class AdministratorService extends UserService {
 		notificationToAdd.setText(text);
 		notificationToAdd.setUser(targetUser);
 		notificationToAdd.setDate(new Date());
+		Link link = new Link();
+		link.setRel("notification");
+		link.setUri(uriInfo + "parents" + "/" + targetUser.getUserId() + "/" + "notifications" + "/"
+				+ notificationToAdd.getId());
+		targetUser.getResources().add(link);
 		entityManager.getTransaction().begin();
 		entityManager.persist(notificationToAdd);
+		entityManager.persist(targetUser);
 		entityManager.getTransaction().commit();
 		return true;
 	}

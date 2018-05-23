@@ -16,10 +16,23 @@ public class PaymentService {
 		this.entityManager = entityManager;
 	}
 
-	public List<Payment> getPayments(String userId) {
+	public List<Payment> getPayments(){
+		Query query = entityManager.createQuery("Select p from Payment p");
+		return query.getResultList();
+	}
+	
+	public List<Payment> getPaymentsFromUser(String userId) {
 		Query query = entityManager.createQuery("Select p from Payment p where p.user=:param");
 		query.setParameter("param", entityManager.find(Parent.class, userId));
 		return query.getResultList();
+	}
+
+	public Payment getPayment(String userId, String paymentId) {
+		Payment targetPayment = entityManager.find(Payment.class, paymentId);
+		if (getPaymentsFromUser(userId).contains(targetPayment))
+			return targetPayment;
+		else
+			return null;
 	}
 
 	public boolean payPayment(String paymentId) {

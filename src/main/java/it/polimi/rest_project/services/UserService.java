@@ -1,12 +1,15 @@
 package it.polimi.rest_project.services;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import it.polimi.rest_project.entities.Administrator;
 import it.polimi.rest_project.entities.Parent;
-import it.polimi.rest_project.entities.PersonalData;
+import it.polimi.rest_project.entities.Student;
 import it.polimi.rest_project.entities.Teacher;
 import it.polimi.rest_project.entities.User;
 
@@ -24,42 +27,47 @@ public abstract class UserService {
 	 * @param userId
 	 * @return
 	 */
-	public PersonalData getPersonalData(String userId) {
+	public User getUser(String userId) {
 		User targetUser = entityManager.find(User.class, userId);
-		return targetUser.getPersonalData();
-	}
-
-	/**
-	 * takes userId and personalData and writes the not-null information to the db
-	 * 
-	 * @param userId
-	 * @param personalData
-	 */
-	public void updatePersonalData(String userId, PersonalData personalData) {
-		User userToUpdate;
-		PersonalData personalDataToUpdate = getPersonalData(userId);
-		if (personalData.getName() != null)
-			personalDataToUpdate.setName(personalData.getName());
-		if (personalData.getSurname() != null)
-			personalDataToUpdate.setSurname(personalData.getSurname());
-		if (personalData.getDateOfBirth() != null)
-			personalDataToUpdate.setDateOfBirth(personalData.getDateOfBirth());
-		entityManager.getTransaction().begin();
-		userToUpdate = entityManager.find(User.class, userId);
-		userToUpdate.setPersonalData(personalDataToUpdate);
-		entityManager.persist(userToUpdate);
-		entityManager.getTransaction().commit();
-	}
-
-	public List<Teacher> getTeachers() {
-		Query query = entityManager
-				.createQuery("Select t.userId, t.personalData.name, t.personalData.surname from Teacher t");
-		return query.getResultList();
+		return targetUser;
 	}
 
 	public List<Parent> getParents() {
-		Query query = entityManager
-				.createQuery("Select p.userId, p.personalData.name, p.personalData.surname from Parent p");
+		Query query = entityManager.createQuery("Select p from Parent p");
 		return query.getResultList();
 	}
+
+	public List<Teacher> getTeachers() {
+		Query query = entityManager.createQuery("Select t from Teacher t");
+		return query.getResultList();
+	}
+
+	public List<Student> getStudents() {
+		Query query = entityManager.createQuery("Select s from Student s");
+		return query.getResultList();
+	}
+
+	public List<Administrator> getAdmins() {
+		Query query = entityManager.createQuery("Select a from Administrator a");
+		return query.getResultList();
+	}
+
+	public boolean updateUserData(String id, String name, String surname, String day, String month, String year) {
+		User targetUser = getUser(id);
+		if (name != null)
+			targetUser.setName(name);
+		if (surname != null)
+			targetUser.setSurname(surname);
+		if (day != null && month != null && year != null)
+			try {
+				targetUser.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
+			} catch (ParseException e) {
+				return false;
+			}
+		entityManager.getTransaction().begin();
+		entityManager.persist(targetUser);
+		entityManager.getTransaction().commit();
+		return true;
+	}
+
 }

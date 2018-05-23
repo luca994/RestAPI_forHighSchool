@@ -31,67 +31,92 @@ public class Payment {
 		this.paymentId = Long.toUnsignedString(random);
 	}
 
-	public Date getDate() {
-		return date;
-	}
-
-	public Integer getAmount() {
-		return amount;
-	}
-
-	public String getReason() {
-		return reason;
-	}
-
+	/**
+	 * @return the paymentId
+	 */
 	public String getPaymentId() {
 		return paymentId;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	/**
+	 * @return the amount
+	 */
+	public Integer getAmount() {
+		return amount;
 	}
 
-	public void setAmount(Integer amount) {
-		this.amount = amount;
+	/**
+	 * @return the date
+	 */
+	public Date getDate() {
+		return date;
 	}
 
-	public void setReason(String reason) {
-		this.reason = reason;
+	/**
+	 * @return the reason
+	 */
+	public String getReason() {
+		return reason;
 	}
 
-	public void setPaymentId(String paymentId) {
-		this.paymentId = paymentId;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Payment other = (Payment) obj;
-		if (paymentId == null) {
-			if (other.paymentId != null)
-				return false;
-		} else if (!paymentId.equals(other.paymentId))
-			return false;
-		return true;
-	}
-
+	/**
+	 * @return the user
+	 */
 	public User getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
-
+	/**
+	 * @return the done
+	 */
 	public boolean isDone() {
 		return done;
 	}
 
+	/**
+	 * @param paymentId
+	 *            the paymentId to set
+	 */
+	public void setPaymentId(String paymentId) {
+		this.paymentId = paymentId;
+	}
+
+	/**
+	 * @param amount
+	 *            the amount to set
+	 */
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
+
+	/**
+	 * @param date
+	 *            the date to set
+	 */
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	/**
+	 * @param reason
+	 *            the reason to set
+	 */
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	/**
+	 * @param user
+	 *            the user to set
+	 */
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	/**
+	 * @param done
+	 *            the done to set
+	 */
 	public void setDone(boolean done) {
 		this.done = done;
 	}
