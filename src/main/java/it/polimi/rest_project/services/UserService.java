@@ -1,17 +1,7 @@
 package it.polimi.rest_project.services;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-
-import it.polimi.rest_project.entities.Administrator;
-import it.polimi.rest_project.entities.Parent;
-import it.polimi.rest_project.entities.Student;
-import it.polimi.rest_project.entities.Teacher;
-import it.polimi.rest_project.entities.User;
 
 public abstract class UserService {
 
@@ -21,53 +11,38 @@ public abstract class UserService {
 		entityManager = Back2School.getEntityManager();
 	}
 
-	/**
-	 * retrieves and returns personalData of a user by searching them to the db
-	 * 
-	 * @param userId
-	 * @return
-	 */
-	public User getUser(String userId) {
-		User targetUser = entityManager.find(User.class, userId);
-		return targetUser;
+
+	public boolean isAdministrator(String userId) {
+		Query queryAdmin = entityManager.createQuery("select a from Administrator a where a.userId=" + userId);
+		if (queryAdmin.getResultList().size() == 1)
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isTeacher(String userId) {
+		Query queryTeacher = entityManager.createQuery("select t from Teacher t where t.userId=" + userId);
+		if (queryTeacher.getResultList().size() == 1)
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isParent(String userId) {
+		Query queryParent = entityManager.createQuery("select p from Parent p where p.userId=" + userId);
+		if (queryParent.getResultList().size() == 1)
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isStudent(String userId) {
+		Query queryParent = entityManager.createQuery("select s from Student s where s.userId=" + userId);
+		if (queryParent.getResultList().size() == 1)
+			return true;
+		else
+			return false;
 	}
 
-	public List<Parent> getParents() {
-		Query query = entityManager.createQuery("Select p from Parent p");
-		return query.getResultList();
-	}
-
-	public List<Teacher> getTeachers() {
-		Query query = entityManager.createQuery("Select t from Teacher t");
-		return query.getResultList();
-	}
-
-	public List<Student> getStudents() {
-		Query query = entityManager.createQuery("Select s from Student s");
-		return query.getResultList();
-	}
-
-	public List<Administrator> getAdmins() {
-		Query query = entityManager.createQuery("Select a from Administrator a");
-		return query.getResultList();
-	}
-
-	public boolean updateUserData(String id, String name, String surname, String day, String month, String year) {
-		User targetUser = getUser(id);
-		if (name != null)
-			targetUser.setName(name);
-		if (surname != null)
-			targetUser.setSurname(surname);
-		if (day != null && month != null && year != null)
-			try {
-				targetUser.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
-			} catch (ParseException e) {
-				return false;
-			}
-		entityManager.getTransaction().begin();
-		entityManager.persist(targetUser);
-		entityManager.getTransaction().commit();
-		return true;
-	}
 
 }

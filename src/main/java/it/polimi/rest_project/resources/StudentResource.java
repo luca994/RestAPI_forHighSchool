@@ -17,31 +17,30 @@ import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.internal.util.Base64;
 
 import it.polimi.rest_project.entities.Student;
-import it.polimi.rest_project.entities.Teacher;
 import it.polimi.rest_project.services.Back2School;
-import it.polimi.rest_project.services.TeacherService;
+import it.polimi.rest_project.services.StudentService;
 
-@Path("teachers")
-public class TeacherResource {
+@Path("students")
+public class StudentResource {
 
-	private TeacherService teacherService;
+	private StudentService studentService;
 
-	public TeacherResource() {
-		teacherService = new TeacherService();
+	public StudentResource() {
+		studentService = new StudentService();
 	}
 
 	@GET
-	public List<Teacher> getTeachers(@Context ContainerRequestContext requestContext){
+	public List<Student> getStudents(@Context ContainerRequestContext requestContext){
 		String userId = getUserId(requestContext);
-		return teacherService.getTeachers(userId);
+		return studentService.getStudents(userId);
 	}
 	
 	@GET
-	@Path("{teacherId}")
-	public Teacher getParent(@PathParam("teacherId") String teacherId,
+	@Path("{studentId}")
+	public Student getStudent(@PathParam("studentId") String studentId,
 			@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
-		return teacherService.getTeacher(userId, teacherId);
+		return studentService.getStudent(userId, studentId);
 	}
 
 	private String getUserId(ContainerRequestContext requestContext) {
@@ -55,20 +54,21 @@ public class TeacherResource {
 	}
 
 	@PUT
-	@Path("{teacherId}")
-	public Response updateTeacher(@PathParam("teacherId") String teacherId,
+	@Path("{studentId}")
+	public Response updateStudent(@PathParam("studentId") String studentId,
 			@Context ContainerRequestContext requestContext, @FormParam("name") String name,
 			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
 			@FormParam("day") String day) {
 		String userId = getUserId(requestContext);
-		return teacherService.updateData(userId, teacherId, name, surname, year, month, day);
+		return studentService.updateData(userId, studentId, name, surname, year, month, day);
 	}
 
 	@POST
-	public Response createTeacher(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext, @FormParam("name") String name,
+	public Response createStudent(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext, @FormParam("name") String name,
 			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
 			@FormParam("day") String day) {
 		String userId = getUserId(requestContext);
-		return teacherService.createTeacher(userId, name, surname, year, month, day, uriInfo.getBaseUri().toString());
+		return studentService.createStudent(userId, name, surname, year, month, day, uriInfo.getBaseUri().toString());
 	}
+
 }

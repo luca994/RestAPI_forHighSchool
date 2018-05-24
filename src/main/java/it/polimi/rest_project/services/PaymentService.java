@@ -3,8 +3,10 @@ package it.polimi.rest_project.services;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import it.polimi.rest_project.entities.Link;
 import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.entities.Payment;
 
@@ -12,36 +14,61 @@ public class PaymentService {
 
 	private EntityManager entityManager;
 
-	public PaymentService(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
-
-	public List<Payment> getPayments(){
-		Query query = entityManager.createQuery("Select p from Payment p");
-		return query.getResultList();
-	}
-	
-	public List<Payment> getPaymentsFromUser(String userId) {
-		Query query = entityManager.createQuery("Select p from Payment p where p.user=:param");
-		query.setParameter("param", entityManager.find(Parent.class, userId));
-		return query.getResultList();
+	public PaymentService() {
+		entityManager = Back2School.getEntityManager();
 	}
 
 	public Payment getPayment(String userId, String paymentId) {
 		Payment targetPayment = entityManager.find(Payment.class, paymentId);
-		if (getPaymentsFromUser(userId).contains(targetPayment))
+		if (targetPayment.getUser().getUserId().equals(userId))
 			return targetPayment;
-		else
-			return null;
+		return null;
 	}
 
-	public boolean payPayment(String paymentId) {
-		Payment targetPayment;
+	public Response issuePayment(String userId, String user2Id, String amount, String reason, String baseUri) {
+		UserService userService = new AdministratorService();
+		if (userService.isAdministrator(userId)) {
+			Payment newPayment = new Payment();
+			if (!userService.isParent(user2Id))
+				return Response.status(Status.BAD_REQUEST).build();
+			newPayment.setUser(entityManager.find(Parent.class, user2Id));
+			newPayment.setAmount(Integer.parseInt(amount));
+			newPayment.setReason(reason);
+			addResources(newPayment, baseUri);
+			entityManager.getTransaction().begin();
+			entityManager.persist(newPayment);
+			entityManager.getTransaction().commit();
+			return Response.status(Status.CREATED).entity(newPayment).build();
+		}
+		return Response.status(Status.UNAUTHORIZED).build();
+	}
+
+	public Response payPayment(String userId, String paymentId) {
+		Payment targetPayment = entityManager.find(Payment.class, paymentId);
+		if (targetPayment.getUser().getUserId().equals(userId)) {
+			targetPayment.setDone(true);
+			entityManager.getTransaction().begin();
+			entityManager.persist(targetPayment);
+			entityManager.getTransaction().commit();
+			return Response.status(Status.OK).entity(targetPayment).build();
+		}
+		return Response.status(Status.UNAUTHORIZED).build();
+	}
+
+	private void addResources(Payment payment, String baseUri) {
+		Link self = new Link(baseUri + "/" + "payments" + payment.getPaymentId(), "self");
+		payment.getResources().add(self);
 		entityManager.getTransaction().begin();
-		targetPayment = entityManager.find(Payment.class, paymentId);
-		targetPayment.setDone(true);
-		entityManager.persist(targetPayment);
+		entityManager.persist(self);
 		entityManager.getTransaction().commit();
-		return true;
+	}
+
+	public List<Payment> getPayments(String userId) {
+		UserService userService = new AdministratorService();
+		if (userService.isAdministrator(userId))
+			return entityManager.createQuery("Select p from Payment p").getResultList();
+		if (userService.isParent(userId))
+			return entityManager.createQuery("Select p from Payment p where p.user.userId=" + userId).getResultList();
+		return null;
 	}
 }

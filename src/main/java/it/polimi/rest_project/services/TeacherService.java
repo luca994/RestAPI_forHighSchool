@@ -2,179 +2,94 @@ package it.polimi.rest_project.services;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
-import it.polimi.rest_project.entities.Appointment;
-import it.polimi.rest_project.entities.Classroom;
-import it.polimi.rest_project.entities.Grade;
-import it.polimi.rest_project.entities.Lecture;
-import it.polimi.rest_project.entities.Student;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import it.polimi.rest_project.entities.Link;
 import it.polimi.rest_project.entities.Teacher;
 
 public class TeacherService extends UserService {
 
-	private AppointmentService appointmentService;
-	private ClassroomService classroomService;
-	private LectureService lectureService;
-
 	public TeacherService() {
-		appointmentService = new AppointmentService(entityManager);
-		classroomService = new ClassroomService(entityManager);
-		lectureService = new LectureService(entityManager);
 	}
 
-	/**
-	 * returns the instance of the parent with that id
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public Teacher getTeacher(String id) {
-		Teacher targetTeacher = entityManager.find(Teacher.class, id);
-		return targetTeacher;
+	public Teacher getTeacher(String userId, String teacherId) {
+		if ((userId == teacherId || isAdministrator(userId)) && isTeacher(teacherId))
+			return entityManager.find(Teacher.class, teacherId);
+		return null;
 	}
 
-	/**
-	 * returns the classroom with the corresponding classroomId
-	 * 
-	 * @param classroomId
-	 * @return
-	 */
-	public Classroom getClassroom(String classroomId) {
-		return entityManager.find(Classroom.class, classroomId);
-	}
-
-	public Grade getGrade(String teacherId, String gradeId) {
-		Grade targetGrade = entityManager.find(Grade.class, gradeId);
-		if (!lectureService.getLecturesFromTeacherAndSubject(teacherId, targetGrade.getSubject()).isEmpty())
-			return targetGrade;
-		else
-			return null;
-	}
-
-	/**
-	 * verifies that the teacher teaches effectively the subject to that student and
-	 * add the grade to the student
-	 * 
-	 * @param teacherId
-	 * @param studentId
-	 * @param subject
-	 * @param grade
-	 * @return
-	 */
-	public boolean addGrade(String teacherId, String studentId, String subject, float grade) {
-		boolean authorization = false;
-		List<Lecture> lectures = lectureService.getLecturesFromTeacherAndSubject(teacherId, subject);
-		List<Classroom> classrooms = classroomService.getClassroomFromStudent(studentId);
-		for (Classroom c : classrooms)
-			for (Lecture l : lectures)
-				if (c.getLectures().contains(l))
-					authorization = true;
-		if (!authorization)
-			return false;
-		Student targetStudent = entityManager.find(Student.class, studentId);
-		Grade newGrade = new Grade(subject, grade);
-		entityManager.getTransaction().begin();
-		entityManager.persist(newGrade);
-		targetStudent.getGrades().add(newGrade);
-		entityManager.getTransaction().commit();
-		return true;
-	}
-
-	/**
-	 * verifies that the teacher teaches effectively the subject to that student and
-	 * modify the grade to the student
-	 * 
-	 * @param teacherId
-	 * @param studentId
-	 * @param gradeId
-	 * @param newGrade
-	 * @return
-	 */
-	public boolean modifyGrade(String teacherId, String studentId, String gradeId, float newGrade) {
-		boolean authorization = false;
-		Grade targetGrade = entityManager.find(Grade.class, gradeId);
-		List<Lecture> lectures = lectureService.getLecturesFromTeacherAndSubject(teacherId, targetGrade.getSubject());
-		List<Classroom> classrooms = classroomService.getClassroomFromStudent(studentId);
-		for (Classroom c : classrooms)
-			for (Lecture l : lectures)
-				if (c.getLectures().contains(l))
-					authorization = true;
-		if (!authorization)
-			return false;
-		entityManager.getTransaction().begin();
-		targetGrade.setMark(newGrade);
-		entityManager.getTransaction().commit();
-		return true;
-	}
-
-	/**
-	 * returns the appointment if the is an appointment involving the teacher
-	 * 
-	 * @param teacherId
-	 * @param appointmentId
-	 * @return
-	 */
-	public Appointment getTeacherAppointment(String teacherId, String appointmentId) {
-		Appointment targetAppointment = entityManager.find(Appointment.class, appointmentId);
-		if (appointmentService.getTeacherAppointments(teacherId).contains(targetAppointment))
-			return targetAppointment;
-		else
-			return null;
-	}
-
-	/**
-	 * returns all the appointments involving the teacher
-	 * 
-	 * @param teacherId
-	 * @return
-	 */
-	public List<Appointment> getTeacherAppointments(String teacherId) {
-		return appointmentService.getParentAppointments(teacherId);
-	}
-
-	/**
-	 * 
-	 * @param userId
-	 * @param appointmentId
-	 * @param date
-	 * @return
-	 */
-	public boolean updateTeacherAppointment(String userId, String appointmentId, String day, String month,
+	public Response updateData(String userId, String teacherId, String name, String surname, String day, String month,
 			String year) {
-		if (!appointmentService.checkIfAppointmentExistsForTeacher(userId, appointmentId))
-			return false;
-		else if (day != null && month != null && year != null)
-			try {
-				Date newDate = new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day);
-				return appointmentService.updateAppointment(appointmentId, newDate);
-			} catch (ParseException e) {
-				return false;
-			}
+		if ((userId == teacherId || isAdministrator(userId)) && isTeacher(teacherId))
+			return updateTeacherData(teacherId, name, surname, day, month, year);
 		else
-			return false;
+			return Response.status(Status.UNAUTHORIZED).build();
 	}
 
-	public boolean addTeacherAppointment(String parentId, String teacherId, String day, String month, String year,
-			String uriInfo) {
+	public Response updateTeacherData(String id, String name, String surname, String day, String month, String year) {
+		Teacher targetTeacher = entityManager.find(Teacher.class, id);
+		if (name != null)
+			targetTeacher.setName(name);
+		if (surname != null)
+			targetTeacher.setSurname(surname);
 		if (day != null && month != null && year != null)
 			try {
-				Date newDate = new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day);
-				return appointmentService.addAppointment(parentId, teacherId, newDate, uriInfo);
+				targetTeacher.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
 			} catch (ParseException e) {
-				return false;
+				return Response.status(Status.NOT_MODIFIED).build();
 			}
-		else
-			return false;
-
+		entityManager.getTransaction().begin();
+		entityManager.persist(targetTeacher);
+		entityManager.getTransaction().commit();
+		return Response.status(Status.OK).entity(targetTeacher).build();
 	}
 
-	public boolean deleteTeacherAppointment(String userId, String appointmentId) {
-		if (appointmentService.checkIfAppointmentExistsForTeacher(userId, appointmentId) == false)
-			return false;
-		else
-			return appointmentService.deleteAppointment(appointmentId);
+	public Response createTeacher(String userId, String name, String surname, String year, String month, String day,
+			String baseUri) {
+		if (isAdministrator(userId)) {
+			Teacher newTeacher = new Teacher();
+			if (name == null || surname == null || day == null || month == null || year == null)
+				return Response.status(Status.BAD_REQUEST).build();
+			newTeacher.setName(name);
+			newTeacher.setSurname(surname);
+			addResources(newTeacher, baseUri);
+			try {
+				newTeacher.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
+			} catch (ParseException e) {
+				return Response.status(Status.BAD_REQUEST).build();
+			}
+			entityManager.getTransaction().begin();
+			entityManager.persist(newTeacher);
+			entityManager.getTransaction().commit();
+			return Response.status(Status.CREATED).entity(newTeacher).build();
+		}
+		return Response.status(Status.UNAUTHORIZED).build();
+	}
+
+	private void addResources(Teacher teacher, String baseUri) {
+		Link self = new Link(baseUri + "/" + "teachers" + teacher.getUserId(), "self");
+		Link classrooms = new Link(baseUri + "/" + "classrooms", "classrooms");
+		Link grades = new Link(baseUri + "/" + "grades", "grades");
+		Link appointments = new Link(baseUri + "/" + "appointments", "appointments");
+		teacher.getResources().add(self);
+		teacher.getResources().add(classrooms);
+		teacher.getResources().add(grades);
+		teacher.getResources().add(appointments);
+		entityManager.getTransaction().begin();
+		entityManager.persist(self);
+		entityManager.persist(classrooms);
+		entityManager.persist(grades);
+		entityManager.persist(appointments);
+		entityManager.getTransaction().commit();
+	}
+
+	public List<Teacher> getTeachers(String userId) {
+		if (isAdministrator(userId))
+			return entityManager.createQuery("Select t from Teacher t").getResultList();
+		return null;
 	}
 
 }

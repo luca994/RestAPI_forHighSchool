@@ -1,6 +1,7 @@
 package it.polimi.rest_project.entities;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import javax.persistence.Column;
@@ -11,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Notifications")
-public class Notification {
+public abstract class Notification {
 	@Id
 	private String id;
 	@Column
@@ -20,70 +21,53 @@ public class Notification {
 	private Date date;
 	@JoinColumn
 	private User user;
+	@JoinColumn
+	private List<Link> resources;
 
 	public Notification() {
 		Long random = new Random().nextLong();
 		this.id = Long.toUnsignedString(random);
+		date = new Date();
 	}
 
-	/**
-	 * @return the id
-	 */
 	public String getId() {
 		return id;
 	}
 
-	/**
-	 * @return the text
-	 */
 	public String getText() {
 		return text;
 	}
 
-	/**
-	 * @return the date
-	 */
 	public Date getDate() {
 		return date;
 	}
 
-	/**
-	 * @return the user
-	 */
 	public User getUser() {
 		return user;
 	}
 
-	/**
-	 * @param id
-	 *            the id to set
-	 */
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	/**
-	 * @param text
-	 *            the text to set
-	 */
 	public void setText(String text) {
 		this.text = text;
 	}
 
-	/**
-	 * @param date
-	 *            the date to set
-	 */
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	/**
-	 * @param user
-	 *            the user to set
-	 */
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public List<Link> getResources() {
+		return resources;
+	}
+
+	public void setResources(List<Link> resources) {
+		this.resources = resources;
 	}
 
 }

@@ -1,42 +1,36 @@
 package it.polimi.rest_project.entities;
 
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
-public class Link implements Serializable{
+@Entity(name = "Links")
+public class Link {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1762280567508862221L;
+	@Id
 	private String uri;
+	@Column
 	private String rel;
 
-	/**
-	 * @return the uri
-	 */
+	public Link() {}
+	
+	public Link(String uri, String rel) {
+		this.uri=uri;
+		this.rel=rel;
+	}
+
 	public String getUri() {
 		return uri;
 	}
 
-	/**
-	 * @return the rel
-	 */
 	public String getRel() {
 		return rel;
 	}
 
-	/**
-	 * @param uri
-	 *            the uri to set
-	 */
 	public void setUri(String uri) {
 		this.uri = uri;
 	}
 
-	/**
-	 * @param rel
-	 *            the rel to set
-	 */
 	public void setRel(String rel) {
 		this.rel = rel;
 	}

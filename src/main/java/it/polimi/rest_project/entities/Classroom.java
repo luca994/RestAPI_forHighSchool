@@ -16,62 +16,54 @@ public class Classroom {
 
 	@Id
 	private String classroomId;
-
 	@JoinTable(name = "Classroom_and_students")
 	private List<Student> students;
-
 	@JoinColumn
 	private List<Lecture> lectures;
+	@JoinColumn
+	private List<Link> resources;
 
 	public Classroom() {
 		students = new ArrayList<Student>();
 		Long random = new Random().nextLong();
 		this.classroomId = Long.toUnsignedString(random);
 	}
+	
+	public Classroom(String id) {
+		students = new ArrayList<Student>();
+		this.classroomId = id;
+	}
 
-	/**
-	 * @return the students
-	 */
 	public List<Student> getStudents() {
 		return students;
 	}
 
-	/**
-	 * @param students
-	 *            the students to set
-	 */
 	public void setStudents(List<Student> students) {
 		this.students = students;
 	}
 
-	/**
-	 * @return the classroomId
-	 */
 	public String getClassroomId() {
 		return classroomId;
 	}
 
-	/**
-	 * @param classroomId
-	 *            the classroomId to set
-	 */
 	public void setClassroomId(String classroomId) {
 		this.classroomId = classroomId;
 	}
 
-	/**
-	 * @return the lectures
-	 */
 	public List<Lecture> getLectures() {
 		return lectures;
 	}
 
-	/**
-	 * @param lectures
-	 *            the lectures to set
-	 */
 	public void setLectures(List<Lecture> lectures) {
 		this.lectures = lectures;
+	}
+
+	public List<Link> getResources() {
+		return resources;
+	}
+
+	public void setResources(List<Link> resources) {
+		this.resources = resources;
 	}
 
 }

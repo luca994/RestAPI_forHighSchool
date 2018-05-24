@@ -1,6 +1,7 @@
 package it.polimi.rest_project.entities;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import javax.persistence.Column;
@@ -25,10 +26,14 @@ public class Payment {
 	private User user;
 	@Column
 	private boolean done;
+	@JoinColumn
+	private List<Link> resources;
 
 	public Payment() {
 		Long random = new Random().nextLong();
 		this.paymentId = Long.toUnsignedString(random);
+		date = new Date();
+		done = false;
 	}
 
 	/**
@@ -119,6 +124,14 @@ public class Payment {
 	 */
 	public void setDone(boolean done) {
 		this.done = done;
+	}
+
+	public List<Link> getResources() {
+		return resources;
+	}
+
+	public void setResources(List<Link> resources) {
+		this.resources = resources;
 	}
 
 }

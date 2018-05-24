@@ -1,0 +1,56 @@
+package it.polimi.rest_project.resources;
+
+import java.util.List;
+import java.util.StringTokenizer;
+
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.glassfish.jersey.internal.util.Base64;
+
+import it.polimi.rest_project.entities.Notification;
+import it.polimi.rest_project.services.Back2School;
+import it.polimi.rest_project.services.NotificationService;
+
+@Path("notifications")
+public class NotificationResource {
+
+	private NotificationService notificationService;
+
+	public NotificationResource() {
+		notificationService = new NotificationService();
+	}
+
+	@GET
+	@Path("{notificationId}")
+	public Notification getNotification(@PathParam("notificationId") String notificationId,
+			@Context ContainerRequestContext requestContext) {
+		String userId = getUserId(requestContext);
+		return notificationService.getNotification(userId, notificationId);
+	}
+
+	private String getUserId(ContainerRequestContext requestContext) {
+		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
+		String auth = headers.get(0);
+		auth = auth.replaceFirst(Back2School.AUTHORIZATION_HEADER_PREFIX, "");
+		auth = Base64.decodeAsString(auth);
+		StringTokenizer tokenizer = new StringTokenizer(auth, ":");
+		String userId = tokenizer.nextToken();
+		return userId;
+	}
+
+	@POST
+	public Response addNotification(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext,
+			@FormParam("user2Id") String user2Id, @FormParam("text") String text) {
+		String userId = getUserId(requestContext);
+		return notificationService.createNotification(userId, user2Id, text,uriInfo.getBaseUri().toString());
+	}
+
+}

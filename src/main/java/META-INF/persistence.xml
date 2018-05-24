@@ -6,11 +6,14 @@
 	<class>it.polimi.rest_project.entities.Administrator</class>
 	<class>it.polimi.rest_project.entities.Appointment</class>
 	<class>it.polimi.rest_project.entities.Classroom</class>
+	<class>it.polimi.rest_project.entities.GeneralNotification</class>
 	<class>it.polimi.rest_project.entities.Grade</class>
 	<class>it.polimi.rest_project.entities.Lecture</class>
+	<class>it.polimi.rest_project.entities.Link</class>
 	<class>it.polimi.rest_project.entities.Notification</class>
 	<class>it.polimi.rest_project.entities.Parent</class>
 	<class>it.polimi.rest_project.entities.Payment</class>
+	<class>it.polimi.rest_project.entities.SpecificNotification</class>
 	<class>it.polimi.rest_project.entities.Student</class>
 	<class>it.polimi.rest_project.entities.Teacher</class>
 	<class>it.polimi.rest_project.entities.User</class>
