@@ -47,14 +47,15 @@ public class TeacherService extends UserService {
 		return Response.status(Status.OK).entity(targetTeacher).build();
 	}
 
-	public Response createTeacher(String userId, String name, String surname, String year, String month, String day,
+	public Response createTeacher(String userId, String name, String surname, String year, String month, String day,String password,
 			String baseUri) {
 		if (isAdministrator(userId)) {
 			Teacher newTeacher = new Teacher();
-			if (name == null || surname == null || day == null || month == null || year == null)
+			if (name == null || surname == null || day == null || month == null || year == null || password==null)
 				return Response.status(Status.BAD_REQUEST).build();
 			newTeacher.setName(name);
 			newTeacher.setSurname(surname);
+			newTeacher.setPassword(password);
 			addResources(newTeacher, baseUri);
 			try {
 				newTeacher.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
@@ -70,10 +71,10 @@ public class TeacherService extends UserService {
 	}
 
 	private void addResources(Teacher teacher, String baseUri) {
-		Link self = new Link(baseUri + "/" + "teachers" + teacher.getUserId(), "self");
-		Link classrooms = new Link(baseUri + "/" + "classrooms", "classrooms");
-		Link grades = new Link(baseUri + "/" + "grades", "grades");
-		Link appointments = new Link(baseUri + "/" + "appointments", "appointments");
+		Link self = new Link(baseUri + "teachers" + "/" + teacher.getUserId(), "self");
+		Link classrooms = new Link(baseUri + "classrooms", "classrooms");
+		Link grades = new Link(baseUri + "grades", "grades");
+		Link appointments = new Link(baseUri + "appointments", "appointments");
 		teacher.getResources().add(self);
 		teacher.getResources().add(classrooms);
 		teacher.getResources().add(grades);

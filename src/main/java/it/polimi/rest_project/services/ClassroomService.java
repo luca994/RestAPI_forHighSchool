@@ -33,8 +33,10 @@ public class ClassroomService {
 
 	public Classroom getClassroom(String userId, String classroomId) {
 		boolean isAuthorized = false;
-		Query queryAdmin = entityManager.createQuery("select a from Administrator a where a.userId=" + userId);
+		Query queryAdmin = entityManager.createQuery("select a from Administrator a where a.userId=:userId");
+		queryAdmin.setParameter("userId", userId);
 		Query queryTeacher = entityManager.createQuery("select t from Teacher t where t.userId=" + userId);
+		queryTeacher.setParameter("userId", userId);
 		if (queryAdmin.getResultList().size() == 1)
 			isAuthorized = true;
 		if (queryTeacher.getResultList().size() == 1)
@@ -96,7 +98,7 @@ public class ClassroomService {
 	}
 
 	private void addResources(Classroom classrooms, String baseUri) {
-		Link self = new Link(baseUri + "/" + "classrooms" + classrooms.getClassroomId(), "self");
+		Link self = new Link(baseUri + "classrooms" +"/"+ classrooms.getClassroomId(), "self");
 		classrooms.getResources().add(self);
 		entityManager.getTransaction().begin();
 		entityManager.persist(self);

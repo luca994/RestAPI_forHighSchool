@@ -59,7 +59,7 @@ public class LectureService {
 	}
 
 	private void addResources(Lecture lecture, String baseUri) {
-		Link self = new Link(baseUri + "/" + "lectures" + lecture.getId(), "self");
+		Link self = new Link(baseUri+ "lectures" +"/"+ lecture.getId(), "self");
 		lecture.getResources().add(self);
 		entityManager.getTransaction().begin();
 		entityManager.persist(self);

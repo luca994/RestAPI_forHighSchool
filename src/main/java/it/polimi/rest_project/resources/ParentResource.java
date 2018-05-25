@@ -17,7 +17,6 @@ import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.internal.util.Base64;
 
 import it.polimi.rest_project.entities.Parent;
-import it.polimi.rest_project.entities.Teacher;
 import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.ParentService;
 
@@ -31,12 +30,11 @@ public class ParentResource {
 	}
 
 	@GET
-	public List<Parent> getParents(@Context ContainerRequestContext requestContext){
+	public List<Parent> getParents(@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return parentService.getParents(userId);
 	}
-	
-	
+
 	@GET
 	@Path("{parentId}")
 	public Parent getParent(@PathParam("parentId") String parentId, @Context ContainerRequestContext requestContext) {
@@ -58,18 +56,18 @@ public class ParentResource {
 	@Path("{parentId}")
 	public Response updateParent(@PathParam("parentId") String parentId,
 			@Context ContainerRequestContext requestContext, @FormParam("name") String name,
-			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
+			@FormParam("surname") String surname,@FormParam("childId") String childId, @FormParam("year") String year, @FormParam("month") String month,
 			@FormParam("day") String day) {
 		String userId = getUserId(requestContext);
-		return parentService.updateData(userId, parentId, name, surname, year, month, day);
+		return parentService.updateData(userId, parentId, name, surname,childId, year, month, day);
 	}
 
 	@POST
-	public Response createParent(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext, @FormParam("name") String name,
-			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
-			@FormParam("day") String day) {
+	public Response createParent(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
+			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") String year,
+			@FormParam("month") String month, @FormParam("day") String day,@FormParam("password") String password) {
 		String userId = getUserId(requestContext);
-		return parentService.createParent(userId, name, surname, year, month, day, uriInfo.getBaseUri().toString());
+		return parentService.createParent(userId, name, surname, year, month, day,password, uriInfo.getBaseUri().toString());
 	}
 
 }

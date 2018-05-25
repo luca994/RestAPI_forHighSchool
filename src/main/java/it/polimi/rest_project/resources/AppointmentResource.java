@@ -28,7 +28,7 @@ public class AppointmentResource {
 	public AppointmentResource() {
 		appointmentService = new AppointmentService();
 	}
-	
+
 	@GET
 	public List<Appointment> getAppointments(@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
@@ -63,10 +63,11 @@ public class AppointmentResource {
 	}
 
 	@POST
-	public Response addAppointment(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext, @FormParam("year") String year,
-			@FormParam("month") String month, @FormParam("day") String day, @FormParam("user2Id") String user2Id) {
+	public Response addAppointment(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
+			@FormParam("year") String year, @FormParam("month") String month, @FormParam("day") String day,
+			@FormParam("user2Id") String user2Id) {
 		String userId = getUserId(requestContext);
-		return appointmentService.createAppointment(userId, user2Id, day, month, year,uriInfo.getBaseUri().toString());
+		return appointmentService.createAppointment(userId, user2Id, day, month, year, uriInfo.getBaseUri().toString());
 	}
 
 }

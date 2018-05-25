@@ -12,12 +12,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.internal.util.Base64;
 
-import it.polimi.rest_project.entities.Administrator;
 import it.polimi.rest_project.entities.Classroom;
 import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.ClassroomService;
@@ -30,9 +29,9 @@ public class ClassroomResource {
 	public ClassroomResource() {
 		classroomService = new ClassroomService();
 	}
-	
+
 	@GET
-	public List<Classroom> getClassrooms(@Context ContainerRequestContext requestContext){
+	public List<Classroom> getClassrooms(@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return classroomService.getClassrooms(userId);
 	}
@@ -69,10 +68,10 @@ public class ClassroomResource {
 	}
 
 	@POST
-	public Response createClassroom(@Context UriInfo uriInfo,@FormParam("classroomId") String classroomId,
+	public Response createClassroom(@Context UriInfo uriInfo, @FormParam("classroomId") String classroomId,
 			@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
-		return classroomService.createClassroom(userId, classroomId,uriInfo.getBaseUri().toString());
+		return classroomService.createClassroom(userId, classroomId, uriInfo.getBaseUri().toString());
 	}
 
 }

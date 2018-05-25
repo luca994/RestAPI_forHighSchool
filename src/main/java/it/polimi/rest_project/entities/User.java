@@ -1,5 +1,8 @@
 package it.polimi.rest_project.entities;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +20,8 @@ public abstract class User {
 
 	@Id
 	private String userId;
+	@Column
+	private byte[] password;
 	@Column
 	private String name;
 	@Column
@@ -70,6 +75,21 @@ public abstract class User {
 
 	public void setResources(List<Link> resources) {
 		this.resources = resources;
+	}
+
+	public byte[] getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		try {
+			byte[] plainPsw = password.getBytes("UTF-8");
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hashedPsw = md.digest(plainPsw);
+			this.password = hashedPsw;
+		} catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+			this.password = null;
+		}
 	}
 
 }

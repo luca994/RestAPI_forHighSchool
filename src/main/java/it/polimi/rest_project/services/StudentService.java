@@ -27,8 +27,10 @@ public class StudentService extends UserService {
 
 	private boolean isAuthorized(String userId, String studentId) {
 		boolean isAuthorized = false;
-		Query queryAdmin = entityManager.createQuery("select a from Administrator a where a.userId=" + userId);
-		Query queryParent = entityManager.createQuery("select p from Parent p where p.userId=" + userId);
+		Query queryAdmin = entityManager.createQuery("select a from Administrator a where a.userId=:userId");
+		queryAdmin.setParameter("userId", userId);
+		Query queryParent = entityManager.createQuery("select p from Parent p where p.userId=:userId");
+		queryAdmin.setParameter("userId", userId);
 		if (queryAdmin.getResultList().size() == 1)
 			isAuthorized = true;
 		if (queryParent.getResultList().size() == 1) {
@@ -67,13 +69,14 @@ public class StudentService extends UserService {
 	}
 
 	public Response createStudent(String userId, String name, String surname, String year, String month, String day,
-			String baseUri) {
+			String password, String baseUri) {
 		if (isAdministrator(userId)) {
 			Student newStudent = new Student();
-			if (name == null || surname == null || day == null || month == null || year == null)
+			if (name == null || surname == null || day == null || month == null || year == null || password == null)
 				return Response.status(Status.BAD_REQUEST).build();
 			newStudent.setName(name);
 			newStudent.setSurname(surname);
+			newStudent.setPassword(password);
 			try {
 				newStudent.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
 			} catch (ParseException e) {
@@ -89,11 +92,20 @@ public class StudentService extends UserService {
 	}
 
 	private void addResources(Student student, String baseUri) {
-		Link self = new Link(baseUri + "/" + "students" + student.getUserId(), "self");
+		Link self = new Link(baseUri + "students" + "/" + student.getUserId(), "self");
 		student.getResources().add(self);
 		entityManager.getTransaction().begin();
 		entityManager.persist(self);
 		entityManager.getTransaction().commit();
+	}
+
+	public List<Student> getStudentsInClassroom(String userId, String classroomId) {
+		if (isAdministrator(userId)) {
+			Query query = entityManager.createQuery("Select c.students from Classroom c where c.classroomId=:classId");
+			query.setParameter("classId", classroomId);
+			return query.getResultList();
+		}
+		return null;
 	}
 
 	public List<Student> getStudents(String userId) {

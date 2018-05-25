@@ -17,7 +17,6 @@ import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.internal.util.Base64;
 
 import it.polimi.rest_project.entities.Administrator;
-import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.services.AdministratorService;
 import it.polimi.rest_project.services.Back2School;
 
@@ -31,12 +30,11 @@ public class AdministratorResource {
 	}
 
 	@GET
-	public List<Administrator> getAdministrators(@Context ContainerRequestContext requestContext){
+	public List<Administrator> getAdministrators(@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return administratorService.getAdministrators(userId);
 	}
-	
-	
+
 	@GET
 	@Path("{adminId}")
 	public Administrator getAdministrator(@PathParam("adminId") String adminId,
@@ -66,10 +64,11 @@ public class AdministratorResource {
 	}
 
 	@POST
-	public Response createAdministrator(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext, @FormParam("name") String name,
-			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
-			@FormParam("day") String day) {
+	public Response createAdministrator(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
+			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") String year,
+			@FormParam("month") String month, @FormParam("day") String day,@FormParam("password") String password) {
 		String userId = getUserId(requestContext);
-		return administratorService.createAdministrator(userId, name, surname, year, month, day,uriInfo.getBaseUri().toString());
+		return administratorService.createAdministrator(userId, name, surname, year, month, day,password,
+				uriInfo.getBaseUri().toString());
 	}
 }

@@ -44,12 +44,14 @@ public class LectureResource {
 		String userId = tokenizer.nextToken();
 		return userId;
 	}
-	
+
 	@POST
-	public Response addLecture(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext,@FormParam("classroomId") String classroomId, @FormParam("day") String day,
-			@FormParam("hour") String hour, @FormParam("teacherId") String teacherId,@FormParam("subject") String subject) {
+	public Response addLecture(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
+			@FormParam("classroomId") String classroomId, @FormParam("day") String day, @FormParam("hour") String hour,
+			@FormParam("teacherId") String teacherId, @FormParam("subject") String subject) {
 		String userId = getUserId(requestContext);
-		return lectureService.createLecture(userId,classroomId, teacherId, day, hour,subject,uriInfo.getBaseUri().toString());
+		return lectureService.createLecture(userId, classroomId, teacherId, day, hour, subject,
+				uriInfo.getBaseUri().toString());
 	}
 
 }

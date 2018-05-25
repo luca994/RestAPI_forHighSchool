@@ -29,6 +29,12 @@ public class GradeResource {
 	}
 
 	@GET
+	public List<Grade> getGrades(@Context ContainerRequestContext requestContext) {
+		String userId = getUserId(requestContext);
+		return gradeService.getGrades(userId);
+	}
+
+	@GET
 	@Path("{gradeId}")
 	public Grade getGrade(@PathParam("gradeId") String gradeId, @Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
@@ -46,10 +52,11 @@ public class GradeResource {
 	}
 
 	@POST
-	public Response addGrade(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext, @FormParam("studentId") String studentId,
-			@FormParam("subject") String subject, @FormParam("mark") String mark) {
+	public Response addGrade(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
+			@FormParam("studentId") String studentId, @FormParam("subject") String subject,
+			@FormParam("mark") String mark) {
 		String userId = getUserId(requestContext);
-		return gradeService.createGrade(userId, studentId, subject, mark,uriInfo.getBaseUri().toString());
+		return gradeService.createGrade(userId, studentId, subject, mark, uriInfo.getBaseUri().toString());
 	}
 
 	@PUT
@@ -57,7 +64,7 @@ public class GradeResource {
 	public Response updateGrade(@PathParam("gradeId") String gradeId, @Context ContainerRequestContext requestContext,
 			@FormParam("mark") String mark) {
 		String userId = getUserId(requestContext);
-		return gradeService.updateGrade(userId, gradeId,mark);
+		return gradeService.updateGrade(userId, gradeId, mark);
 	}
 
 }

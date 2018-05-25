@@ -1,13 +1,20 @@
 package it.polimi.rest_project.services;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.polimi.rest_project.entities.Classroom;
+import it.polimi.rest_project.entities.GeneralNotification;
+import it.polimi.rest_project.entities.Lecture;
 import it.polimi.rest_project.entities.Link;
 import it.polimi.rest_project.entities.Notification;
 import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.entities.SpecificNotification;
+import it.polimi.rest_project.entities.Student;
 import it.polimi.rest_project.entities.Teacher;
 
 public class NotificationService {
@@ -34,30 +41,140 @@ public class NotificationService {
 		return null;
 	}
 
-	public Response createNotification(String userId, String user2Id, String text, String baseUri) {
+	public Response createNotification(String userId, String id, String text, String baseUri) {
 		UserService userService = new AdministratorService();
+		if (text == null)
+			return Response.status(Status.BAD_REQUEST).build();
 		if (userService.isAdministrator(userId)) {
-			SpecificNotification newNotification = new SpecificNotification();
-			if (userService.isParent(user2Id))
-				newNotification.setUser(entityManager.find(Parent.class, user2Id));
-			if (userService.isTeacher(user2Id))
-				newNotification.setUser(entityManager.find(Teacher.class, user2Id));
+			if (userService.isParent(id) || userService.isTeacher(id))
+				return createSpecificNotification(id, text, baseUri);
+			if (id == null)
+				return createGeneralNotification(text, baseUri);
+			Query query = entityManager.createQuery("Select c from Classroom c where c.classroomId=:classId");
+			query.setParameter("classId", id);
+			List<Classroom> classroom = query.getResultList();
+			if (classroom.size() == 1)
+				return createGeneralClassNotification(classroom.get(0), text, baseUri);
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		return Response.status(Status.UNAUTHORIZED).build();
+	}
+
+	private Response createGeneralClassNotification(Classroom classroom, String text, String baseUri) {
+		List<Parent> parents = entityManager.createQuery("Select p from Parent p").getResultList();
+		List<Teacher> teachers = entityManager.createQuery("Select t from Teacher t").getResultList();
+		for (Parent p : parents) {
+			for (Student s : p.getStudents())
+				if (classroom.getStudents().contains(s)) {
+					GeneralNotification newNotification = new GeneralNotification();
+					newNotification.setUser(p);
+					newNotification.setText(text);
+					addResources(newNotification, baseUri);
+					entityManager.getTransaction().begin();
+					entityManager.persist(newNotification);
+					entityManager.getTransaction().commit();
+					break;
+				}
+		}
+		for (Teacher t : teachers) {
+			for (Lecture l : classroom.getLectures())
+				if (l.getTeacher().getUserId().equals(t.getUserId())) {
+					GeneralNotification newNotification = new GeneralNotification();
+					newNotification.setUser(t);
+					newNotification.setText(text);
+					addResources(newNotification, baseUri);
+					entityManager.getTransaction().begin();
+					entityManager.persist(newNotification);
+					entityManager.getTransaction().commit();
+					break;
+				}
+		}
+		return Response.status(Status.CREATED).build();
+	}
+
+	private Response createGeneralNotification(String text, String baseUri) {
+		List<Parent> parents = entityManager.createQuery("Select p from Parent p").getResultList();
+		List<Teacher> teachers = entityManager.createQuery("Select t from Teacher t").getResultList();
+		for (Parent p : parents) {
+			GeneralNotification newNotification = new GeneralNotification();
+			newNotification.setUser(p);
 			newNotification.setText(text);
 			addResources(newNotification, baseUri);
 			entityManager.getTransaction().begin();
 			entityManager.persist(newNotification);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newNotification).build();
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		for (Teacher t : teachers) {
+			GeneralNotification newNotification = new GeneralNotification();
+			newNotification.setUser(t);
+			newNotification.setText(text);
+			addResources(newNotification, baseUri);
+			entityManager.getTransaction().begin();
+			entityManager.persist(newNotification);
+			entityManager.getTransaction().commit();
+		}
+		return Response.status(Status.CREATED).build();
+	}
+
+	private Response createSpecificNotification(String id, String text, String baseUri) {
+		UserService userService = new AdministratorService();
+		SpecificNotification newNotification = new SpecificNotification();
+		if (userService.isParent(id)) {
+			newNotification.setUser(entityManager.find(Parent.class, id));
+		}
+		if (userService.isTeacher(id)) {
+			newNotification.setUser(entityManager.find(Teacher.class, id));
+		}
+		newNotification.setText(text);
+		addResources(newNotification, baseUri);
+		entityManager.getTransaction().begin();
+		entityManager.persist(newNotification);
+		entityManager.getTransaction().commit();
+		return Response.status(Status.CREATED).entity(newNotification).build();
 	}
 
 	private void addResources(Notification notification, String baseUri) {
-		Link self = new Link(baseUri + "/" + "notifications" + notification.getId(), "self");
+		Link self = new Link(baseUri + "notifications" +"/"+ notification.getId(), "self");
 		notification.getResources().add(self);
 		entityManager.getTransaction().begin();
 		entityManager.persist(self);
 		entityManager.getTransaction().commit();
+	}
+
+	public List<Notification> getNotifications(String userId) {
+		UserService userService = new AdministratorService();
+		if (userService.isAdministrator(userId))
+			return entityManager.createQuery("Select n from Notification n").getResultList();
+		if (userService.isParent(userId) || userService.isTeacher(userId)) {
+			Query query = entityManager.createQuery("Select n from Notification n where n.user.userId=:userId");
+			query.setParameter("userId", userId);
+			return query.getResultList();
+		}
+		return null;
+	}
+
+	public List<Notification> getGeneralNotifications(String userId) {
+		UserService userService = new AdministratorService();
+		if (userService.isAdministrator(userId))
+			return entityManager.createQuery("Select n from GeneralNotification n").getResultList();
+		if (userService.isParent(userId) || userService.isTeacher(userId)) {
+			Query query = entityManager.createQuery("Select n from GeneralNotification n where n.user.userId=:userId");
+			query.setParameter("userId", userId);
+			return query.getResultList();
+		}
+		return null;
+	}
+
+	public List<Notification> getSpecificNotifications(String userId) {
+		UserService userService = new AdministratorService();
+		if (userService.isAdministrator(userId))
+			return entityManager.createQuery("Select n from SpecificNotification n").getResultList();
+		if (userService.isParent(userId) || userService.isTeacher(userId)) {
+			Query query = entityManager.createQuery("Select n from SpecificNotification n where n.user.userId=:userId");
+			query.setParameter("userId", userId);
+			return query.getResultList();
+		}
+		return null;
 	}
 
 }

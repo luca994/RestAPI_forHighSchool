@@ -1,8 +1,11 @@
 package it.polimi.rest_project.services;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -56,7 +59,7 @@ public class PaymentService {
 	}
 
 	private void addResources(Payment payment, String baseUri) {
-		Link self = new Link(baseUri + "/" + "payments" + payment.getPaymentId(), "self");
+		Link self = new Link(baseUri + "payments" + "/" + payment.getPaymentId(), "self");
 		payment.getResources().add(self);
 		entityManager.getTransaction().begin();
 		entityManager.persist(self);
@@ -67,8 +70,31 @@ public class PaymentService {
 		UserService userService = new AdministratorService();
 		if (userService.isAdministrator(userId))
 			return entityManager.createQuery("Select p from Payment p").getResultList();
-		if (userService.isParent(userId))
-			return entityManager.createQuery("Select p from Payment p where p.user.userId=" + userId).getResultList();
+		if (userService.isParent(userId)) {
+			Query query = entityManager.createQuery("Select p from Payment p where p.user.userId=");
+			query.setParameter("userId", userId);
+			return query.getResultList();
+		}
+		return null;
+	}
+
+	public List<Payment> getPaymentsMonthly(String userId, Integer month) {
+		UserService userService = new AdministratorService();
+		if (userService.isAdministrator(userId) || userService.isParent(userId)) {
+			Query query;
+			if (userService.isAdministrator(userId)) {
+				query = entityManager.createQuery("Select p from Payment p");
+			} else {
+				query = entityManager.createQuery("Select p from Payment p where p.user.userId=");
+				query.setParameter("userId", userId);
+			}
+			List<Payment> payments = query.getResultList();
+			List<Payment> displayablePayments = new ArrayList<Payment>();
+			for (Payment p : payments)
+				if ((p.getDate().getMonth() + 1) == month)
+					displayablePayments.add(p);
+			return displayablePayments;
+		}
 		return null;
 	}
 }

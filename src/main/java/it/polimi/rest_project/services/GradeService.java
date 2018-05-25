@@ -1,5 +1,8 @@
 package it.polimi.rest_project.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
@@ -40,7 +43,7 @@ public class GradeService {
 		return null;
 	}
 
-	public Response createGrade(String userId, String studentId, String subject, String mark,String baseUri) {
+	public Response createGrade(String userId, String studentId, String subject, String mark, String baseUri) {
 		UserService userService = new AdministratorService();
 		if (subject == null || mark == null || studentId == null)
 			return Response.status(Status.BAD_REQUEST).build();
@@ -84,12 +87,29 @@ public class GradeService {
 			return Response.status(Status.UNAUTHORIZED).build();
 	}
 
-	private void addResources(Grade grade,String baseUri) {
-		Link self = new Link(baseUri+"/"+"grades"+grade.getGradeId(),"self");
+	private void addResources(Grade grade, String baseUri) {
+		Link self = new Link(baseUri + "grades" +"/"+ grade.getGradeId(), "self");
 		grade.getResources().add(self);
 		entityManager.getTransaction().begin();
 		entityManager.persist(self);
 		entityManager.getTransaction().commit();
 	}
-	
+
+	public List<Grade> getGrades(String userId) {
+		UserService userService = new AdministratorService();
+		if (userService.isParent(userId)) {
+			List<Grade> displayableGrades = new ArrayList<Grade>();
+			Parent targetParent = entityManager.find(Parent.class, userId);
+			for (Student s : targetParent.getStudents())
+				displayableGrades.addAll(s.getGrades());
+			return displayableGrades;
+		}
+		if (userService.isTeacher(userId)) {
+			Query query = entityManager.createQuery("Select g from Grade g where g.teacher.userId=:userId");
+			query.setParameter("userId", userId);
+			return query.getResultList();
+		}
+		return null;
+	}
+
 }

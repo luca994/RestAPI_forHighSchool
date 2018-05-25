@@ -9,6 +9,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -30,11 +31,14 @@ public class StudentResource {
 	}
 
 	@GET
-	public List<Student> getStudents(@Context ContainerRequestContext requestContext){
+	public List<Student> getStudents(@Context ContainerRequestContext requestContext,@QueryParam("classroom") String classId) {
 		String userId = getUserId(requestContext);
+		if(classId!=null)
+			return studentService.getStudentsInClassroom(userId,classId);
 		return studentService.getStudents(userId);
+		
 	}
-	
+
 	@GET
 	@Path("{studentId}")
 	public Student getStudent(@PathParam("studentId") String studentId,
@@ -64,11 +68,11 @@ public class StudentResource {
 	}
 
 	@POST
-	public Response createStudent(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext, @FormParam("name") String name,
-			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
-			@FormParam("day") String day) {
+	public Response createStudent(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
+			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") String year,
+			@FormParam("month") String month, @FormParam("day") String day, @FormParam("password") String password) {
 		String userId = getUserId(requestContext);
-		return studentService.createStudent(userId, name, surname, year, month, day, uriInfo.getBaseUri().toString());
+		return studentService.createStudent(userId, name, surname, year, month, day,password, uriInfo.getBaseUri().toString());
 	}
 
 }

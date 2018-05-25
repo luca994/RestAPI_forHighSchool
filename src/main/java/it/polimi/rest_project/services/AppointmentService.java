@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -95,7 +96,7 @@ public class AppointmentService {
 	}
 
 	private void addResources(Appointment appointment, String baseUri) {
-		Link self = new Link(baseUri + "/" + "appointments" + appointment.getAppointmentId(), "self");
+		Link self = new Link(baseUri + "appointments" +"/"+ appointment.getAppointmentId(), "self");
 		appointment.getResources().add(self);
 		entityManager.getTransaction().begin();
 		entityManager.persist(self);
@@ -104,12 +105,16 @@ public class AppointmentService {
 
 	public List<Appointment> getAppointments(String userId) {
 		UserService userService = new AdministratorService();
-		if (userService.isTeacher(userId))
-			return entityManager.createQuery("Select a from Appointment a where a.teacher.userId=" + userId)
-					.getResultList();
-		if (userService.isParent(userId))
-			return entityManager.createQuery("Select a from Appointment a where a.parent.userId=" + userId)
-					.getResultList();
+		if (userService.isTeacher(userId)) {
+			Query query = entityManager.createQuery("Select a from Appointment a where a.teacher.userId=:userId");
+			query.setParameter("userId", userId);
+			return query.getResultList();
+		}
+		if (userService.isParent(userId)) {
+			Query query = entityManager.createQuery("Select a from Appointment a where a.parent.userId=:userId");
+			query.setParameter("userId", userId);
+			return query.getResultList();
+		}
 		return null;
 	}
 

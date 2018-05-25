@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -29,6 +30,16 @@ public class NotificationResource {
 	}
 
 	@GET
+	public List<Notification> getNotifications(@Context ContainerRequestContext requestContext,@QueryParam("type") String type) {
+		String userId = getUserId(requestContext);
+		if(type.toLowerCase().equals("general"))
+			return notificationService.getGeneralNotifications(userId);
+		if(type.toLowerCase().equals("specific"))
+			return notificationService.getSpecificNotifications(userId);
+		return notificationService.getNotifications(userId);
+	}
+
+	@GET
 	@Path("{notificationId}")
 	public Notification getNotification(@PathParam("notificationId") String notificationId,
 			@Context ContainerRequestContext requestContext) {
@@ -47,10 +58,10 @@ public class NotificationResource {
 	}
 
 	@POST
-	public Response addNotification(@Context UriInfo uriInfo,@Context ContainerRequestContext requestContext,
-			@FormParam("user2Id") String user2Id, @FormParam("text") String text) {
+	public Response addNotification(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
+			@FormParam("id") String id, @FormParam("text") String text) {
 		String userId = getUserId(requestContext);
-		return notificationService.createNotification(userId, user2Id, text,uriInfo.getBaseUri().toString());
+		return notificationService.createNotification(userId, id, text, uriInfo.getBaseUri().toString());
 	}
 
 }

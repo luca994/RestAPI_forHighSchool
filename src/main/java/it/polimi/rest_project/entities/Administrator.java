@@ -9,8 +9,10 @@ public class Administrator extends User {
 		super();
 	}
 
-	public Administrator(String userId) {
+	public Administrator(String userId,String password) {
+		super();
 		this.setUserId(userId);
+		this.setPassword(password);
 	}
 
 }

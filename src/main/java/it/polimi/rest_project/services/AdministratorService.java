@@ -17,7 +17,7 @@ public class AdministratorService extends UserService {
 	}
 
 	public Administrator getAdministrator(String userId, String adminId) {
-		if (userId == adminId && isAdministrator(adminId))
+		if (userId.equals(adminId) && isAdministrator(adminId))
 			return entityManager.find(Administrator.class, adminId);
 		return null;
 	}
@@ -51,13 +51,14 @@ public class AdministratorService extends UserService {
 	}
 
 	public Response createAdministrator(String userId, String name, String surname, String year, String month,
-			String day, String baseUri) {
+			String day,String password, String baseUri) {
 		if (isAdministrator(userId)) {
 			Administrator newAdministrator = new Administrator();
-			if (name == null || surname == null || day == null || month == null || year == null)
+			if (name == null || surname == null || day == null || month == null || year == null || password==null)
 				return Response.status(Status.BAD_REQUEST).build();
 			newAdministrator.setName(name);
 			newAdministrator.setSurname(surname);
+			newAdministrator.setPassword(password);
 			try {
 				newAdministrator
 						.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
@@ -74,13 +75,13 @@ public class AdministratorService extends UserService {
 	}
 
 	private void addResources(Administrator administrator, String baseUri) {
-		Link self = new Link(baseUri + "/" + "admins" + administrator.getUserId(), "self");
-		Link students = new Link(baseUri + "/" + "students", "students");
-		Link teachers = new Link(baseUri + "/" + "teachers", "teachers");
-		Link parents = new Link(baseUri + "/" + "parents", "parents");
-		Link payments = new Link(baseUri + "/" + "payments", "payments");
-		Link notifications = new Link(baseUri + "/" + "notifications", "notifications");
-		Link classrooms = new Link(baseUri + "/" + "classrooms", "classrooms");
+		Link self = new Link(baseUri + "admins" +"/"+ administrator.getUserId(), "self");
+		Link students = new Link(baseUri + "students", "students");
+		Link teachers = new Link(baseUri + "teachers", "teachers");
+		Link parents = new Link(baseUri +  "parents", "parents");
+		Link payments = new Link(baseUri + "payments", "payments");
+		Link notifications = new Link(baseUri + "notifications", "notifications");
+		Link classrooms = new Link(baseUri + "classrooms", "classrooms");
 		administrator.getResources().add(self);
 		administrator.getResources().add(students);
 		administrator.getResources().add(payments);
