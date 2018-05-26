@@ -24,7 +24,7 @@ public class AdministratorService extends UserService {
 
 	public Response updateData(String userId, String teacherId, String name, String surname, String day, String month,
 			String year) {
-		if (userId == teacherId && isAdministrator(userId))
+		if (userId.equals(teacherId) && isAdministrator(userId))
 			return updateAdministratorData(teacherId, name, surname, day, month, year);
 		else
 			return Response.status(Status.UNAUTHORIZED).build();
@@ -51,10 +51,10 @@ public class AdministratorService extends UserService {
 	}
 
 	public Response createAdministrator(String userId, String name, String surname, String year, String month,
-			String day,String password, String baseUri) {
+			String day, String password, String baseUri) {
 		if (isAdministrator(userId)) {
 			Administrator newAdministrator = new Administrator();
-			if (name == null || surname == null || day == null || month == null || year == null || password==null)
+			if (name == null || surname == null || day == null || month == null || year == null || password == null)
 				return Response.status(Status.BAD_REQUEST).build();
 			newAdministrator.setName(name);
 			newAdministrator.setSurname(surname);
@@ -75,10 +75,10 @@ public class AdministratorService extends UserService {
 	}
 
 	private void addResources(Administrator administrator, String baseUri) {
-		Link self = new Link(baseUri + "admins" +"/"+ administrator.getUserId(), "self");
+		Link self = new Link(baseUri + "admins" + "/" + administrator.getUserId(), "self");
 		Link students = new Link(baseUri + "students", "students");
 		Link teachers = new Link(baseUri + "teachers", "teachers");
-		Link parents = new Link(baseUri +  "parents", "parents");
+		Link parents = new Link(baseUri + "parents", "parents");
 		Link payments = new Link(baseUri + "payments", "payments");
 		Link notifications = new Link(baseUri + "notifications", "notifications");
 		Link classrooms = new Link(baseUri + "classrooms", "classrooms");
@@ -89,15 +89,6 @@ public class AdministratorService extends UserService {
 		administrator.getResources().add(teachers);
 		administrator.getResources().add(parents);
 		administrator.getResources().add(classrooms);
-		entityManager.getTransaction().begin();
-		entityManager.persist(self);
-		entityManager.persist(students);
-		entityManager.persist(notifications);
-		entityManager.persist(classrooms);
-		entityManager.persist(teachers);
-		entityManager.persist(parents);
-		entityManager.persist(payments);
-		entityManager.getTransaction().commit();
 	}
 
 	public List<Administrator> getAdministrators(String userId) {

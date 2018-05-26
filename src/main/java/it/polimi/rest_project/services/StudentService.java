@@ -94,9 +94,6 @@ public class StudentService extends UserService {
 	private void addResources(Student student, String baseUri) {
 		Link self = new Link(baseUri + "students" + "/" + student.getUserId(), "self");
 		student.getResources().add(self);
-		entityManager.getTransaction().begin();
-		entityManager.persist(self);
-		entityManager.getTransaction().commit();
 	}
 
 	public List<Student> getStudentsInClassroom(String userId, String classroomId) {

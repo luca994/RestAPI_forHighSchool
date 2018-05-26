@@ -136,9 +136,6 @@ public class NotificationService {
 	private void addResources(Notification notification, String baseUri) {
 		Link self = new Link(baseUri + "notifications" +"/"+ notification.getId(), "self");
 		notification.getResources().add(self);
-		entityManager.getTransaction().begin();
-		entityManager.persist(self);
-		entityManager.getTransaction().commit();
 	}
 
 	public List<Notification> getNotifications(String userId) {

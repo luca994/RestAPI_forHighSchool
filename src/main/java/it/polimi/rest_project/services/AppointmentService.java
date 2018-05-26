@@ -98,9 +98,6 @@ public class AppointmentService {
 	private void addResources(Appointment appointment, String baseUri) {
 		Link self = new Link(baseUri + "appointments" +"/"+ appointment.getAppointmentId(), "self");
 		appointment.getResources().add(self);
-		entityManager.getTransaction().begin();
-		entityManager.persist(self);
-		entityManager.getTransaction().commit();
 	}
 
 	public List<Appointment> getAppointments(String userId) {

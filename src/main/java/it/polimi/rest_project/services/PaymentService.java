@@ -1,7 +1,6 @@
 package it.polimi.rest_project.services;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -61,9 +60,6 @@ public class PaymentService {
 	private void addResources(Payment payment, String baseUri) {
 		Link self = new Link(baseUri + "payments" + "/" + payment.getPaymentId(), "self");
 		payment.getResources().add(self);
-		entityManager.getTransaction().begin();
-		entityManager.persist(self);
-		entityManager.getTransaction().commit();
 	}
 
 	public List<Payment> getPayments(String userId) {

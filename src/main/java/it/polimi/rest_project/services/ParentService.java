@@ -18,14 +18,14 @@ public class ParentService extends UserService {
 	}
 
 	public Parent getParent(String userId, String parentId) {
-		if (userId == parentId || isAdministrator(userId))
+		if (userId.equals(parentId) || isAdministrator(userId))
 			return entityManager.find(Parent.class, parentId);
 		return null;
 	}
 
 	public Response updateData(String userId, String parentId, String name, String surname, String childId, String day,
 			String month, String year) {
-		if (userId == parentId || isAdministrator(userId))
+		if (userId.equals(parentId) || isAdministrator(userId))
 			return updateParentData(parentId, name, surname, childId, day, month, year);
 		else
 			return Response.status(Status.UNAUTHORIZED).build();
@@ -87,13 +87,6 @@ public class ParentService extends UserService {
 		parent.getResources().add(payments);
 		parent.getResources().add(notifications);
 		parent.getResources().add(appointments);
-		entityManager.getTransaction().begin();
-		entityManager.persist(self);
-		entityManager.persist(students);
-		entityManager.persist(notifications);
-		entityManager.persist(appointments);
-		entityManager.persist(payments);
-		entityManager.getTransaction().commit();
 	}
 
 	public List<Parent> getParents(String userId) {

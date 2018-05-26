@@ -16,14 +16,14 @@ public class TeacherService extends UserService {
 	}
 
 	public Teacher getTeacher(String userId, String teacherId) {
-		if ((userId == teacherId || isAdministrator(userId)) && isTeacher(teacherId))
+		if ((userId.equals(teacherId) || isAdministrator(userId)) && isTeacher(teacherId))
 			return entityManager.find(Teacher.class, teacherId);
 		return null;
 	}
 
 	public Response updateData(String userId, String teacherId, String name, String surname, String day, String month,
 			String year) {
-		if ((userId == teacherId || isAdministrator(userId)) && isTeacher(teacherId))
+		if ((userId.equals(teacherId) || isAdministrator(userId)) && isTeacher(teacherId))
 			return updateTeacherData(teacherId, name, surname, day, month, year);
 		else
 			return Response.status(Status.UNAUTHORIZED).build();
@@ -79,12 +79,6 @@ public class TeacherService extends UserService {
 		teacher.getResources().add(classrooms);
 		teacher.getResources().add(grades);
 		teacher.getResources().add(appointments);
-		entityManager.getTransaction().begin();
-		entityManager.persist(self);
-		entityManager.persist(classrooms);
-		entityManager.persist(grades);
-		entityManager.persist(appointments);
-		entityManager.getTransaction().commit();
 	}
 
 	public List<Teacher> getTeachers(String userId) {

@@ -90,9 +90,6 @@ public class GradeService {
 	private void addResources(Grade grade, String baseUri) {
 		Link self = new Link(baseUri + "grades" +"/"+ grade.getGradeId(), "self");
 		grade.getResources().add(self);
-		entityManager.getTransaction().begin();
-		entityManager.persist(self);
-		entityManager.getTransaction().commit();
 	}
 
 	public List<Grade> getGrades(String userId) {

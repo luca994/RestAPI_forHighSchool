@@ -100,9 +100,6 @@ public class ClassroomService {
 	private void addResources(Classroom classrooms, String baseUri) {
 		Link self = new Link(baseUri + "classrooms" +"/"+ classrooms.getClassroomId(), "self");
 		classrooms.getResources().add(self);
-		entityManager.getTransaction().begin();
-		entityManager.persist(self);
-		entityManager.getTransaction().commit();
 	}
 
 	public List<Classroom> getClassrooms(String userId) {

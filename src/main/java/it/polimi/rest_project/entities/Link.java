@@ -1,22 +1,18 @@
 package it.polimi.rest_project.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import java.io.Serializable;
 
-@Entity(name = "Links")
-public class Link {
+public class Link implements Serializable {
 
-	@Id
 	private String uri;
-	@Column
 	private String rel;
 
-	public Link() {}
-	
+	public Link() {
+	}
+
 	public Link(String uri, String rel) {
-		this.uri=uri;
-		this.rel=rel;
+		this.uri = uri;
+		this.rel = rel;
 	}
 
 	public String getUri() {
