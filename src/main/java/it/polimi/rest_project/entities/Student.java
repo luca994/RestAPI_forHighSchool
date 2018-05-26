@@ -1,6 +1,7 @@
 package it.polimi.rest_project.entities;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -17,21 +18,15 @@ public class Student extends User {
 		grades = new ArrayList<Grade>();
 	}
 
+	public Student(String name, String surname, String password, Calendar dateOfBirth) {
+		super(name, surname, password, dateOfBirth);
+		grades = new ArrayList<Grade>();
+	}
 
-
-	/**
-	 * @return the grades
-	 */
 	public List<Grade> getGrades() {
 		return grades;
 	}
 
-
-
-	/**
-	 * @param grades
-	 *            the grades to set
-	 */
 	public void setGrades(List<Grade> grades) {
 		this.grades = grades;
 	}

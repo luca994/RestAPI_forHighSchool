@@ -18,16 +18,15 @@ public class UserService {
 	}
 
 	public void createFirstAdmin() {
-		if(entityManager.createQuery("Select a from Administrator a").getResultList().size()==0) {
-			Administrator admin = new Administrator("1","admin");
+		if (entityManager.createQuery("Select a from Administrator a").getResultList().size() == 0) {
+			Administrator admin = new Administrator("1", "admin");
 			entityManager.getTransaction().begin();
 			entityManager.persist(admin);
 			entityManager.getTransaction().commit();
-		}
-		else
+		} else
 			return;
 	}
-	
+
 	public boolean verifyLogin(String userId, String password) {
 		byte[] hashedPsw;
 		try {

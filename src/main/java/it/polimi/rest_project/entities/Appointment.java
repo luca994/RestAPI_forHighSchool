@@ -1,6 +1,6 @@
 package it.polimi.rest_project.entities;
 
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -10,14 +10,23 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import it.polimi.rest_project.json.OptimizedDateSerializer;
+
 @Entity
 @Table(name = "Appointments")
+@JsonPropertyOrder({ "date", "teacher", "parent", "resources" })
 public class Appointment {
 
 	@Id
+	@JsonIgnore
 	private String appointmentId;
 	@Column
-	private Date date;
+	@JsonSerialize(using = OptimizedDateSerializer.class)
+	private Calendar date;
 	@JoinColumn
 	private Teacher teacher;
 	@JoinColumn
@@ -34,7 +43,7 @@ public class Appointment {
 		return appointmentId;
 	}
 
-	public Date getDate() {
+	public Calendar getDate() {
 		return date;
 	}
 
@@ -46,11 +55,15 @@ public class Appointment {
 		return parent;
 	}
 
+	public List<Link> getResources() {
+		return resources;
+	}
+
 	public void setAppointmentId(String appointmentId) {
 		this.appointmentId = appointmentId;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(Calendar date) {
 		this.date = date;
 	}
 
@@ -62,12 +75,9 @@ public class Appointment {
 		this.parent = parent;
 	}
 
-	public List<Link> getResources() {
-		return resources;
-	}
-
 	public void setResources(List<Link> resources) {
 		this.resources = resources;
 	}
+
 
 }

@@ -72,6 +72,11 @@ public class ClassroomService {
 			try {
 				Classroom targetClass = entityManager.find(Classroom.class, classroomId);
 				Lecture targetLecture = entityManager.find(Lecture.class, lectureId);
+				Query query = entityManager.createQuery("select c from Classroom c where :lecture in c.lectures");
+				query.setParameter("lecture", targetLecture);
+				if (query.getResultList().size() != 0)
+					return Response.status(Status.BAD_REQUEST)
+							.entity("this lecture is already associated to a classroom").build();
 				targetClass.getLectures().add(targetLecture);
 				entityManager.getTransaction().begin();
 				entityManager.persist(targetClass);
@@ -98,12 +103,12 @@ public class ClassroomService {
 	}
 
 	private void addResources(Classroom classrooms, String baseUri) {
-		Link self = new Link(baseUri + "classrooms" +"/"+ classrooms.getClassroomId(), "self");
+		Link self = new Link(baseUri + "classrooms" + "/" + classrooms.getClassroomId(), "self");
 		classrooms.getResources().add(self);
 	}
 
 	public List<Classroom> getClassrooms(String userId) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (userService.isAdministrator(userId))
 			return entityManager.createQuery("Select c from Classroom c").getResultList();
 		if (userService.isTeacher(userId)) {
@@ -116,6 +121,18 @@ public class ClassroomService {
 			return displayableClassroom;
 		}
 		return null;
+	}
+
+	public Response deleteClassroom(String userId, String classroomId) {
+		UserService userService = new UserService();
+		Classroom toDelete = entityManager.find(Classroom.class, classroomId);
+		if (userService.isAdministrator(userId)) {
+			entityManager.getTransaction().begin();
+			entityManager.remove(toDelete);
+			entityManager.getTransaction().commit();
+			return Response.status(Status.NO_CONTENT).entity("Deleted").build();
+		}
+		return Response.status(Status.UNAUTHORIZED).build();
 	}
 
 }

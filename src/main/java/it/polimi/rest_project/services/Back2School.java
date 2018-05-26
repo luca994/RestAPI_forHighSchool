@@ -5,6 +5,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.ws.rs.ApplicationPath;
 
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import it.polimi.rest_project.security.SecurityManager;
@@ -20,6 +21,7 @@ public class Back2School extends ResourceConfig {
 	public Back2School() {
 		packages("it.polimi.rest_project.resources");
 		register(SecurityManager.class);
+		register(JacksonFeature.class);
 		UserService userService = new UserService();
 		userService.createFirstAdmin();
 	}

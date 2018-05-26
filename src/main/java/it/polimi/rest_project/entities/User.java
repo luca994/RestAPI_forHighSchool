@@ -4,7 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 
@@ -14,20 +15,29 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import it.polimi.rest_project.json.OptimizedDateSerializer;
+
 @Entity
 @Table(name = "Users")
+@JsonPropertyOrder({ "userId", "name", "surname", "dateOfBirth", "resources" })
 public abstract class User {
 
 	@Id
 	private String userId;
 	@Column
+	@JsonIgnore
 	private byte[] password;
 	@Column
 	private String name;
 	@Column
 	private String surname;
 	@Column
-	private Date dateOfBirth;
+	@JsonSerialize(using = OptimizedDateSerializer.class)
+	private Calendar dateOfBirth;
 	@JoinColumn
 	private List<Link> resources;
 
@@ -35,6 +45,17 @@ public abstract class User {
 		Long random = new Random().nextLong();
 		this.userId = Long.toUnsignedString(random);
 		this.resources = new ArrayList<Link>();
+		this.dateOfBirth = new GregorianCalendar();
+	}
+	
+	public User(String name,String surname,String password,Calendar dateOfBirth) {
+		Long random = new Random().nextLong();
+		this.userId = Long.toUnsignedString(random);
+		this.name=name;
+		this.surname=surname;
+		this.dateOfBirth=dateOfBirth;
+		this.resources = new ArrayList<Link>();
+		setPassword(password);
 	}
 
 	public String getUserId() {
@@ -49,7 +70,7 @@ public abstract class User {
 		return surname;
 	}
 
-	public Date getDateOfBirth() {
+	public Calendar getDateOfBirth() {
 		return dateOfBirth;
 	}
 
@@ -65,7 +86,7 @@ public abstract class User {
 		this.surname = surname;
 	}
 
-	public void setDateOfBirth(Date dateOfBirth) {
+	public void setDateOfBirth(Calendar dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 

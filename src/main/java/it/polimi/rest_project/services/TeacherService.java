@@ -1,7 +1,6 @@
 package it.polimi.rest_project.services;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -21,47 +20,36 @@ public class TeacherService extends UserService {
 		return null;
 	}
 
-	public Response updateData(String userId, String teacherId, String name, String surname, String day, String month,
-			String year) {
+	public Response updateData(String userId, String teacherId, String name, String surname, Integer day, Integer month,
+			Integer year) {
 		if ((userId.equals(teacherId) || isAdministrator(userId)) && isTeacher(teacherId))
 			return updateTeacherData(teacherId, name, surname, day, month, year);
 		else
 			return Response.status(Status.UNAUTHORIZED).build();
 	}
 
-	public Response updateTeacherData(String id, String name, String surname, String day, String month, String year) {
+	public Response updateTeacherData(String id, String name, String surname, Integer day, Integer month,
+			Integer year) {
 		Teacher targetTeacher = entityManager.find(Teacher.class, id);
 		if (name != null)
 			targetTeacher.setName(name);
 		if (surname != null)
 			targetTeacher.setSurname(surname);
 		if (day != null && month != null && year != null)
-			try {
-				targetTeacher.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
-			} catch (ParseException e) {
-				return Response.status(Status.NOT_MODIFIED).build();
-			}
+			targetTeacher.setDateOfBirth(new GregorianCalendar(year, month - 1, day));
 		entityManager.getTransaction().begin();
 		entityManager.persist(targetTeacher);
 		entityManager.getTransaction().commit();
 		return Response.status(Status.OK).entity(targetTeacher).build();
 	}
 
-	public Response createTeacher(String userId, String name, String surname, String year, String month, String day,String password,
-			String baseUri) {
+	public Response createTeacher(String userId, String name, String surname, Integer year, Integer month, Integer day,
+			String password, String baseUri) {
 		if (isAdministrator(userId)) {
-			Teacher newTeacher = new Teacher();
-			if (name == null || surname == null || day == null || month == null || year == null || password==null)
+			if (name == null || surname == null || day == null || month == null || year == null || password == null)
 				return Response.status(Status.BAD_REQUEST).build();
-			newTeacher.setName(name);
-			newTeacher.setSurname(surname);
-			newTeacher.setPassword(password);
+			Teacher newTeacher = new Teacher(name, surname, password, new GregorianCalendar(year, month - 1, day));
 			addResources(newTeacher, baseUri);
-			try {
-				newTeacher.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
-			} catch (ParseException e) {
-				return Response.status(Status.BAD_REQUEST).build();
-			}
 			entityManager.getTransaction().begin();
 			entityManager.persist(newTeacher);
 			entityManager.getTransaction().commit();

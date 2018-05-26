@@ -3,13 +3,16 @@ package it.polimi.rest_project.resources;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -19,6 +22,9 @@ import it.polimi.rest_project.entities.Lecture;
 import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.LectureService;
 
+
+@Produces(MediaType.APPLICATION_JSON)
+@Path("lectures")
 public class LectureResource {
 
 	private LectureService lectureService;
@@ -52,6 +58,13 @@ public class LectureResource {
 		String userId = getUserId(requestContext);
 		return lectureService.createLecture(userId, classroomId, teacherId, day, hour, subject,
 				uriInfo.getBaseUri().toString());
+	}
+	
+	@DELETE
+	@Path("{lectureId}")
+	public Response deleteLecture(@PathParam("lectureId") String lectureId,@Context ContainerRequestContext requestContext) {
+		String userId = getUserId(requestContext);
+		return lectureService.deleteLecture(userId, lectureId);
 	}
 
 }

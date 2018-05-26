@@ -23,7 +23,7 @@ public class GradeService {
 	}
 
 	public boolean isAuthorized(String userId, String gradeId) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		Grade targetGrade = entityManager.find(Grade.class, gradeId);
 		if (userService.isParent(userId)) {
 			Parent targetParent = entityManager.find(Parent.class, userId);
@@ -44,7 +44,7 @@ public class GradeService {
 	}
 
 	public Response createGrade(String userId, String studentId, String subject, String mark, String baseUri) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (subject == null || mark == null || studentId == null)
 			return Response.status(Status.BAD_REQUEST).build();
 		if (userService.isTeacher(userId) && userService.isStudent(studentId)) {
@@ -70,7 +70,7 @@ public class GradeService {
 	}
 
 	public Response updateGrade(String userId, String gradeId, String mark) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (gradeId == null || mark == null)
 			return Response.status(Status.BAD_REQUEST).build();
 		if (userService.isTeacher(userId)) {
@@ -88,12 +88,12 @@ public class GradeService {
 	}
 
 	private void addResources(Grade grade, String baseUri) {
-		Link self = new Link(baseUri + "grades" +"/"+ grade.getGradeId(), "self");
+		Link self = new Link(baseUri + "grades" + "/" + grade.getGradeId(), "self");
 		grade.getResources().add(self);
 	}
 
 	public List<Grade> getGrades(String userId) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (userService.isParent(userId)) {
 			List<Grade> displayableGrades = new ArrayList<Grade>();
 			Parent targetParent = entityManager.find(Parent.class, userId);
@@ -107,6 +107,18 @@ public class GradeService {
 			return query.getResultList();
 		}
 		return null;
+	}
+
+	public Response deleteGrade(String userId, String gradeId) {
+		UserService userService = new UserService();
+		Grade toDelete = entityManager.find(Grade.class, gradeId);
+		if (userService.isTeacher(userId) && toDelete.getTeacher().getUserId().equals(userId)) {
+			entityManager.getTransaction().begin();
+			entityManager.remove(toDelete);
+			entityManager.getTransaction().commit();
+			return Response.status(Status.NO_CONTENT).entity("Deleted").build();
+		}
+		return Response.status(Status.UNAUTHORIZED).build();
 	}
 
 }

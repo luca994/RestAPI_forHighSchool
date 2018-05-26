@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Link implements Serializable {
 
+	private static final long serialVersionUID = -8292004600551619853L;
 	private String uri;
 	private String rel;
 

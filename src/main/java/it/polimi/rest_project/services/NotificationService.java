@@ -26,7 +26,7 @@ public class NotificationService {
 	}
 
 	public boolean isAuthorized(String userId, String notificationId) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		Notification targetNotification = entityManager.find(Notification.class, notificationId);
 		if (userService.isAdministrator(userId))
 			return true;
@@ -42,7 +42,7 @@ public class NotificationService {
 	}
 
 	public Response createNotification(String userId, String id, String text, String baseUri) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (text == null)
 			return Response.status(Status.BAD_REQUEST).build();
 		if (userService.isAdministrator(userId)) {
@@ -117,7 +117,7 @@ public class NotificationService {
 	}
 
 	private Response createSpecificNotification(String id, String text, String baseUri) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		SpecificNotification newNotification = new SpecificNotification();
 		if (userService.isParent(id)) {
 			newNotification.setUser(entityManager.find(Parent.class, id));
@@ -134,12 +134,12 @@ public class NotificationService {
 	}
 
 	private void addResources(Notification notification, String baseUri) {
-		Link self = new Link(baseUri + "notifications" +"/"+ notification.getId(), "self");
+		Link self = new Link(baseUri + "notifications" + "/" + notification.getId(), "self");
 		notification.getResources().add(self);
 	}
 
 	public List<Notification> getNotifications(String userId) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (userService.isAdministrator(userId))
 			return entityManager.createQuery("Select n from Notification n").getResultList();
 		if (userService.isParent(userId) || userService.isTeacher(userId)) {
@@ -151,7 +151,7 @@ public class NotificationService {
 	}
 
 	public List<Notification> getGeneralNotifications(String userId) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (userService.isAdministrator(userId))
 			return entityManager.createQuery("Select n from GeneralNotification n").getResultList();
 		if (userService.isParent(userId) || userService.isTeacher(userId)) {
@@ -163,7 +163,7 @@ public class NotificationService {
 	}
 
 	public List<Notification> getSpecificNotifications(String userId) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (userService.isAdministrator(userId))
 			return entityManager.createQuery("Select n from SpecificNotification n").getResultList();
 		if (userService.isParent(userId) || userService.isTeacher(userId)) {

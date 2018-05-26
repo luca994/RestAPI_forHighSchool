@@ -9,8 +9,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -20,6 +22,7 @@ import it.polimi.rest_project.entities.Teacher;
 import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.TeacherService;
 
+@Produces(MediaType.APPLICATION_JSON)
 @Path("teachers")
 public class TeacherResource {
 
@@ -57,17 +60,18 @@ public class TeacherResource {
 	@Path("{teacherId}")
 	public Response updateTeacher(@PathParam("teacherId") String teacherId,
 			@Context ContainerRequestContext requestContext, @FormParam("name") String name,
-			@FormParam("surname") String surname, @FormParam("year") String year, @FormParam("month") String month,
-			@FormParam("day") String day) {
+			@FormParam("surname") String surname, @FormParam("year") Integer year, @FormParam("month") Integer month,
+			@FormParam("day") Integer day) {
 		String userId = getUserId(requestContext);
 		return teacherService.updateData(userId, teacherId, name, surname, year, month, day);
 	}
 
 	@POST
 	public Response createTeacher(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
-			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") String year,
-			@FormParam("month") String month, @FormParam("day") String day,@FormParam("password") String password) {
+			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") Integer year,
+			@FormParam("month") Integer month, @FormParam("day") Integer day, @FormParam("password") String password) {
 		String userId = getUserId(requestContext);
-		return teacherService.createTeacher(userId, name, surname, year, month, day,password, uriInfo.getBaseUri().toString());
+		return teacherService.createTeacher(userId, name, surname, year, month, day, password,
+				uriInfo.getBaseUri().toString());
 	}
 }

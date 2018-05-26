@@ -1,7 +1,6 @@
 package it.polimi.rest_project.services;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -42,46 +41,35 @@ public class StudentService extends UserService {
 		return isAuthorized;
 	}
 
-	public Response updateData(String userId, String studentId, String name, String surname, String day, String month,
-			String year) {
+	public Response updateData(String userId, String studentId, String name, String surname, Integer day, Integer month,
+			Integer year) {
 		if (isAuthorized(userId, studentId) && isStudent(studentId))
 			return updateStudentData(studentId, name, surname, day, month, year);
 		else
 			return Response.status(Status.UNAUTHORIZED).build();
 	}
 
-	public Response updateStudentData(String id, String name, String surname, String day, String month, String year) {
+	public Response updateStudentData(String id, String name, String surname, Integer day, Integer month,
+			Integer year) {
 		Student targetStudent = entityManager.find(Student.class, id);
 		if (name != null)
 			targetStudent.setName(name);
 		if (surname != null)
 			targetStudent.setSurname(surname);
 		if (day != null && month != null && year != null)
-			try {
-				targetStudent.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
-			} catch (ParseException e) {
-				return Response.status(Status.NOT_MODIFIED).build();
-			}
+			targetStudent.setDateOfBirth(new GregorianCalendar(year, month - 1, day));
 		entityManager.getTransaction().begin();
 		entityManager.persist(targetStudent);
 		entityManager.getTransaction().commit();
 		return Response.status(Status.OK).entity(targetStudent).build();
 	}
 
-	public Response createStudent(String userId, String name, String surname, String year, String month, String day,
+	public Response createStudent(String userId, String name, String surname, Integer year, Integer month, Integer day,
 			String password, String baseUri) {
 		if (isAdministrator(userId)) {
-			Student newStudent = new Student();
 			if (name == null || surname == null || day == null || month == null || year == null || password == null)
 				return Response.status(Status.BAD_REQUEST).build();
-			newStudent.setName(name);
-			newStudent.setSurname(surname);
-			newStudent.setPassword(password);
-			try {
-				newStudent.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
-			} catch (ParseException e) {
-				return Response.status(Status.BAD_REQUEST).build();
-			}
+			Student newStudent = new Student(name, surname, password, new GregorianCalendar(year, month - 1, day));
 			addResources(newStudent, baseUri);
 			entityManager.getTransaction().begin();
 			entityManager.persist(newStudent);

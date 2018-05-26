@@ -3,14 +3,17 @@ package it.polimi.rest_project.resources;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -21,6 +24,7 @@ import it.polimi.rest_project.entities.Classroom;
 import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.ClassroomService;
 
+@Produces(MediaType.APPLICATION_JSON)
 @Path("classrooms")
 public class ClassroomResource {
 
@@ -72,6 +76,13 @@ public class ClassroomResource {
 			@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return classroomService.createClassroom(userId, classroomId, uriInfo.getBaseUri().toString());
+	}
+	
+	@DELETE
+	@Path("{classroomsId}")
+	public Response deleteClassroom(@PathParam("classroomId") String classroomId, @Context ContainerRequestContext requestContext) {
+		String userId = getUserId(requestContext);
+		return classroomService.deleteClassroom(userId, classroomId);
 	}
 
 }

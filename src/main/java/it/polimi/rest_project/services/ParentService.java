@@ -1,7 +1,6 @@
 package it.polimi.rest_project.services;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -23,16 +22,16 @@ public class ParentService extends UserService {
 		return null;
 	}
 
-	public Response updateData(String userId, String parentId, String name, String surname, String childId, String day,
-			String month, String year) {
+	public Response updateData(String userId, String parentId, String name, String surname, String childId, Integer day,
+			Integer month, Integer year) {
 		if (userId.equals(parentId) || isAdministrator(userId))
 			return updateParentData(parentId, name, surname, childId, day, month, year);
 		else
 			return Response.status(Status.UNAUTHORIZED).build();
 	}
 
-	public Response updateParentData(String id, String name, String surname, String childId, String day, String month,
-			String year) {
+	public Response updateParentData(String id, String name, String surname, String childId, Integer day, Integer month,
+			Integer year) {
 		Parent targetParent = entityManager.find(Parent.class, id);
 		if (name != null)
 			targetParent.setName(name);
@@ -42,32 +41,20 @@ public class ParentService extends UserService {
 			targetParent.getStudents().add(entityManager.find(Student.class, childId));
 		}
 		if (day != null && month != null && year != null)
-			try {
-				targetParent.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
-			} catch (ParseException e) {
-				return Response.status(Status.NOT_MODIFIED).build();
-			}
+			targetParent.setDateOfBirth(new GregorianCalendar(year, month - 1, day));
 		entityManager.getTransaction().begin();
 		entityManager.persist(targetParent);
 		entityManager.getTransaction().commit();
 		return Response.status(Status.OK).entity(targetParent).build();
 	}
 
-	public Response createParent(String userId, String name, String surname, String year, String month, String day,
+	public Response createParent(String userId, String name, String surname, Integer year, Integer month, Integer day,
 			String password, String baseUri) {
 		if (isAdministrator(userId)) {
-			Parent newParent = new Parent();
 			if (name == null || surname == null || day == null || month == null || year == null || password == null)
 				return Response.status(Status.BAD_REQUEST).build();
-			newParent.setName(name);
-			newParent.setSurname(surname);
-			newParent.setPassword(password);
+			Parent newParent = new Parent(name, surname, password, new GregorianCalendar(year, month - 1, day));
 			addResources(newParent, baseUri);
-			try {
-				newParent.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(year + "-" + month + "-" + day));
-			} catch (ParseException e) {
-				return Response.status(Status.BAD_REQUEST).build();
-			}
 			entityManager.getTransaction().begin();
 			entityManager.persist(newParent);
 			entityManager.getTransaction().commit();

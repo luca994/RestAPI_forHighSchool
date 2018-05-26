@@ -28,7 +28,7 @@ public class PaymentService {
 	}
 
 	public Response issuePayment(String userId, String user2Id, String amount, String reason, String baseUri) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (userService.isAdministrator(userId)) {
 			Payment newPayment = new Payment();
 			if (!userService.isParent(user2Id))
@@ -63,7 +63,7 @@ public class PaymentService {
 	}
 
 	public List<Payment> getPayments(String userId) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (userService.isAdministrator(userId))
 			return entityManager.createQuery("Select p from Payment p").getResultList();
 		if (userService.isParent(userId)) {
@@ -75,7 +75,7 @@ public class PaymentService {
 	}
 
 	public List<Payment> getPaymentsMonthly(String userId, Integer month) {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		if (userService.isAdministrator(userId) || userService.isParent(userId)) {
 			Query query;
 			if (userService.isAdministrator(userId)) {
@@ -87,7 +87,7 @@ public class PaymentService {
 			List<Payment> payments = query.getResultList();
 			List<Payment> displayablePayments = new ArrayList<Payment>();
 			for (Payment p : payments)
-				if ((p.getDate().getMonth() + 1) == month)
+				if ((p.getDate().get(2) + 1) == month)
 					displayablePayments.add(p);
 			return displayablePayments;
 		}

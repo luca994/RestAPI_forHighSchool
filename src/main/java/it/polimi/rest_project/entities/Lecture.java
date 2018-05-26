@@ -10,11 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 @Entity
 @Table(name = "Lectures")
+@JsonPropertyOrder({"day", "hour", "subject", "teacher", "resources" })
 public class Lecture {
 
 	@Id
+	@JsonIgnore
 	private String id;
 	@Column
 	private DayOfWeek day;

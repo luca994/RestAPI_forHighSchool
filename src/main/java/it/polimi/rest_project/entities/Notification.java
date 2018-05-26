@@ -1,6 +1,7 @@
 package it.polimi.rest_project.entities;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 
@@ -10,15 +11,25 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import it.polimi.rest_project.json.OptimizedDateSerializer;
+
 @Entity
 @Table(name = "Notifications")
+@JsonPropertyOrder({ "date", "text", "user", "resources" })
 public abstract class Notification {
+
 	@Id
+	@JsonIgnore
 	private String id;
 	@Column
 	private String text;
 	@Column
-	private Date date;
+	@JsonSerialize(using = OptimizedDateSerializer.class)
+	private Calendar date;
 	@JoinColumn
 	private User user;
 	@JoinColumn
@@ -27,7 +38,7 @@ public abstract class Notification {
 	public Notification() {
 		Long random = new Random().nextLong();
 		this.id = Long.toUnsignedString(random);
-		date = new Date();
+		date = new GregorianCalendar();
 	}
 
 	public String getId() {
@@ -38,12 +49,16 @@ public abstract class Notification {
 		return text;
 	}
 
-	public Date getDate() {
+	public Calendar getDate() {
 		return date;
 	}
 
 	public User getUser() {
 		return user;
+	}
+
+	public List<Link> getResources() {
+		return resources;
 	}
 
 	public void setId(String id) {
@@ -54,16 +69,12 @@ public abstract class Notification {
 		this.text = text;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(Calendar date) {
 		this.date = date;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
-	}
-
-	public List<Link> getResources() {
-		return resources;
 	}
 
 	public void setResources(List<Link> resources) {

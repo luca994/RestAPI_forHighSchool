@@ -10,11 +10,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 @Entity
 @Table(name = "Classrooms")
+@JsonPropertyOrder({ "students", "lectures", "resources" })
 public class Classroom {
 
 	@Id
+	@JsonIgnore
 	private String classroomId;
 	@JoinTable(name = "Classroom_and_students")
 	private List<Student> students;

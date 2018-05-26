@@ -9,11 +9,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 @Entity
 @Table(name = "Grades")
+@JsonPropertyOrder({"subject", "mark", "teacher", "resources" })
 public class Grade {
 
 	@Id
+	@JsonIgnore
 	private String gradeId;
 	@Column
 	private String subject;
