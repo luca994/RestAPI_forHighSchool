@@ -34,7 +34,7 @@ public class StudentResource {
 	}
 
 	@GET
-	public List<Student> getStudents(@Context ContainerRequestContext requestContext,@QueryParam("classroom") String classId) {
+	public List<Student> getStudents(@Context ContainerRequestContext requestContext,@QueryParam("classroomId") String classId) {
 		String userId = getUserId(requestContext);
 		if(classId!=null)
 			return studentService.getStudentsInClassroom(userId,classId);

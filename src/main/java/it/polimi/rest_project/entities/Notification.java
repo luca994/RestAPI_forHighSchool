@@ -1,5 +1,6 @@
 package it.polimi.rest_project.entities;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -31,6 +33,7 @@ public abstract class Notification {
 	@JsonSerialize(using = OptimizedDateSerializer.class)
 	private Calendar date;
 	@JoinColumn
+	@JsonIgnoreProperties({ "userId", "dateOfBirth" })
 	private User user;
 	@JoinColumn
 	private List<Link> resources;
@@ -39,6 +42,7 @@ public abstract class Notification {
 		Long random = new Random().nextLong();
 		this.id = Long.toUnsignedString(random);
 		date = new GregorianCalendar();
+		this.resources=new ArrayList<Link>();
 	}
 
 	public String getId() {

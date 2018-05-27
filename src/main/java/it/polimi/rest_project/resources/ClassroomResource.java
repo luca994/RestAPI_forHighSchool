@@ -59,7 +59,7 @@ public class ClassroomResource {
 	}
 
 	@PUT
-	@Path("{classroomsId}")
+	@Path("{classroomId}")
 	public Response addInfoToClassroom(@PathParam("classroomId") String classroomId,
 			@Context ContainerRequestContext requestContext, @FormParam("studentId") String studentId,
 			@FormParam("lectureId") String lectureId) {
@@ -79,7 +79,7 @@ public class ClassroomResource {
 	}
 	
 	@DELETE
-	@Path("{classroomsId}")
+	@Path("{classroomId}")
 	public Response deleteClassroom(@PathParam("classroomId") String classroomId, @Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return classroomService.deleteClassroom(userId, classroomId);

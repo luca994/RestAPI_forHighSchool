@@ -35,7 +35,7 @@ public class ClassroomService {
 		boolean isAuthorized = false;
 		Query queryAdmin = entityManager.createQuery("select a from Administrator a where a.userId=:userId");
 		queryAdmin.setParameter("userId", userId);
-		Query queryTeacher = entityManager.createQuery("select t from Teacher t where t.userId=" + userId);
+		Query queryTeacher = entityManager.createQuery("select t from Teacher t where t.userId=:userId");
 		queryTeacher.setParameter("userId", userId);
 		if (queryAdmin.getResultList().size() == 1)
 			isAuthorized = true;
@@ -51,7 +51,7 @@ public class ClassroomService {
 		if (userService.isAdministrator(userId)) {
 			try {
 				Classroom targetClass = entityManager.find(Classroom.class, classroomId);
-				if (!userService.isStudent(userId))
+				if (!userService.isStudent(studentId))
 					return Response.status(Status.BAD_REQUEST).build();
 				Student targetStudent = entityManager.find(Student.class, studentId);
 				targetClass.getStudents().add(targetStudent);

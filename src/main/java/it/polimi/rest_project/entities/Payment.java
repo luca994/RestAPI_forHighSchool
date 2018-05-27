@@ -1,5 +1,6 @@
 package it.polimi.rest_project.entities;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -31,6 +33,7 @@ public class Payment {
 	@Column
 	private String reason;
 	@JoinColumn
+	@JsonIgnoreProperties({ "userId", "dateOfBirth" })
 	private User user;
 	@Column
 	private boolean done;
@@ -41,6 +44,7 @@ public class Payment {
 		Long random = new Random().nextLong();
 		this.paymentId = Long.toUnsignedString(random);
 		date = new GregorianCalendar();
+		this.resources=new ArrayList<Link>();
 		done = false;
 	}
 

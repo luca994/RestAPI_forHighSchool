@@ -1,5 +1,6 @@
 package it.polimi.rest_project.entities;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
@@ -11,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -28,8 +30,10 @@ public class Appointment {
 	@JsonSerialize(using = OptimizedDateSerializer.class)
 	private Calendar date;
 	@JoinColumn
+	@JsonIgnoreProperties({ "userId", "resources", "dateOfBirth" })
 	private Teacher teacher;
 	@JoinColumn
+	@JsonIgnoreProperties({ "userId", "resources", "dateOfBirth" })
 	private Parent parent;
 	@JoinColumn
 	private List<Link> resources;
@@ -37,6 +41,7 @@ public class Appointment {
 	public Appointment() {
 		Long random = new Random().nextLong();
 		this.appointmentId = Long.toUnsignedString(random);
+		this.resources=new ArrayList<Link>();
 	}
 
 	public String getAppointmentId() {

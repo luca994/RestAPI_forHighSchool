@@ -78,9 +78,9 @@ public class UserService {
 	}
 
 	public boolean isStudent(String userId) {
-		Query queryParent = entityManager.createQuery("select s from Student s where s.userId=:userId");
-		queryParent.setParameter("userId", userId);
-		if (queryParent.getResultList().size() == 1)
+		Query queryStudent = entityManager.createQuery("select s from Student s where s.userId=:userId");
+		queryStudent.setParameter("userId", userId);
+		if (queryStudent.getResultList().size() == 1)
 			return true;
 		else
 			return false;

@@ -7,7 +7,10 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 @Entity
+@JsonPropertyOrder({ "userId", "name", "surname", "dateOfBirth", "grades", "resources" })
 public class Student extends User {
 
 	@JoinColumn

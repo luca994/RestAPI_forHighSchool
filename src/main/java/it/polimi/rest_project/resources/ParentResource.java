@@ -60,10 +60,10 @@ public class ParentResource {
 	@Path("{parentId}")
 	public Response updateParent(@PathParam("parentId") String parentId,
 			@Context ContainerRequestContext requestContext, @FormParam("name") String name,
-			@FormParam("surname") String surname, @FormParam("childId") String childId, @FormParam("year") Integer year,
+			@FormParam("surname") String surname, @FormParam("studentId") String studentId, @FormParam("year") Integer year,
 			@FormParam("month") Integer month, @FormParam("day") Integer day) {
 		String userId = getUserId(requestContext);
-		return parentService.updateData(userId, parentId, name, surname, childId, year, month, day);
+		return parentService.updateData(userId, parentId, name, surname, studentId, year, month, day);
 	}
 
 	@POST

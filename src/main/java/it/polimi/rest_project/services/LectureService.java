@@ -43,7 +43,7 @@ public class LectureService {
 				return Response.status(Status.BAD_REQUEST).build();
 			Classroom targetClassroom = entityManager.find(Classroom.class, classroomId);
 			Lecture newLecture = new Lecture();
-			newLecture.setDay(DayOfWeek.valueOf(day));
+			newLecture.setDay(DayOfWeek.valueOf(day.toUpperCase()));
 			newLecture.setHour(Integer.parseInt(hour));
 			newLecture.setSubject(subject);
 			newLecture.setTeacher(entityManager.find(Teacher.class, teacherId));

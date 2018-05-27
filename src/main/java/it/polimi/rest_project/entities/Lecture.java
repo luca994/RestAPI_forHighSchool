@@ -1,6 +1,7 @@
 package it.polimi.rest_project.entities;
 
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -11,11 +12,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
 @Table(name = "Lectures")
-@JsonPropertyOrder({"day", "hour", "subject", "teacher", "resources" })
+@JsonPropertyOrder({ "day", "hour", "subject", "teacher", "resources" })
 public class Lecture {
 
 	@Id
@@ -26,6 +28,7 @@ public class Lecture {
 	@Column
 	private Integer hour;
 	@JoinColumn
+	@JsonIgnoreProperties({ "userId", "resources", "dateOfBirth" })
 	private Teacher teacher;
 	@Column
 	private String subject;
@@ -35,6 +38,7 @@ public class Lecture {
 	public Lecture() {
 		Long random = new Random().nextLong();
 		this.id = Long.toUnsignedString(random);
+		this.resources = new ArrayList<Link>();
 	}
 
 	public String getId() {

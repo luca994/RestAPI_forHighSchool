@@ -33,11 +33,12 @@ public class NotificationResource {
 	}
 
 	@GET
-	public List<Notification> getNotifications(@Context ContainerRequestContext requestContext,@QueryParam("type") String type) {
+	public List<Notification> getNotifications(@Context ContainerRequestContext requestContext,
+			@QueryParam("type") String type) {
 		String userId = getUserId(requestContext);
-		if(type.toLowerCase().equals("general"))
+		if (type.toLowerCase().equals("general"))
 			return notificationService.getGeneralNotifications(userId);
-		if(type.toLowerCase().equals("specific"))
+		if (type.toLowerCase().equals("specific"))
 			return notificationService.getSpecificNotifications(userId);
 		return notificationService.getNotifications(userId);
 	}
@@ -60,6 +61,19 @@ public class NotificationResource {
 		return userId;
 	}
 
+	/**
+	 * if the id corresponds to a parent or a teacher, it creates a specific
+	 * notification for that teacher/parent. If the id corresponds to a classroom it
+	 * creates a general notification for all the parents which have a child
+	 * enrolled in that class. If the id is null it creates a general notification
+	 * for all the parents and all the teachers in the system
+	 * 
+	 * @param uriInfo
+	 * @param requestContext
+	 * @param id
+	 * @param text
+	 * @return
+	 */
 	@POST
 	public Response addNotification(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
 			@FormParam("id") String id, @FormParam("text") String text) {

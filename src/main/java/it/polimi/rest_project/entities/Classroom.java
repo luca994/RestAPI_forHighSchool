@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
@@ -19,9 +19,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class Classroom {
 
 	@Id
-	@JsonIgnore
 	private String classroomId;
 	@JoinTable(name = "Classroom_and_students")
+	@JsonIgnoreProperties({ "userId", "grades", "dateOfBirth" })
 	private List<Student> students;
 	@JoinColumn
 	private List<Lecture> lectures;
@@ -32,10 +32,12 @@ public class Classroom {
 		students = new ArrayList<Student>();
 		Long random = new Random().nextLong();
 		this.classroomId = Long.toUnsignedString(random);
+		this.resources = new ArrayList<Link>();
 	}
-	
+
 	public Classroom(String id) {
 		students = new ArrayList<Student>();
+		this.resources = new ArrayList<Link>();
 		this.classroomId = id;
 	}
 

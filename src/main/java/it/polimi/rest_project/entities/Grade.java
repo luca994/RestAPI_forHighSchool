@@ -1,5 +1,6 @@
 package it.polimi.rest_project.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -10,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
@@ -25,6 +27,7 @@ public class Grade {
 	@Column
 	private float mark;
 	@JoinColumn
+	@JsonIgnoreProperties({ "userId", "resources", "dateOfBirth" })
 	private Teacher teacher;
 	@JoinColumn
 	private List<Link> resources;
@@ -32,6 +35,7 @@ public class Grade {
 	public Grade() {
 		Long random = new Random().nextLong();
 		this.gradeId = Long.toUnsignedString(random);
+		this.resources=new ArrayList<Link>();
 	}
 
 	public String getGradeId() {

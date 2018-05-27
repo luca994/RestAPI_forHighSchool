@@ -18,7 +18,6 @@ import it.polimi.rest_project.services.AdministratorService;
 import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.UserService;
 
-
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class SecurityManager implements ContainerRequestFilter {
@@ -27,15 +26,20 @@ public class SecurityManager implements ContainerRequestFilter {
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		UserService userService = new AdministratorService();
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
-		String auth = headers.get(0);
-		auth = auth.replaceFirst(Back2School.AUTHORIZATION_HEADER_PREFIX, "");
-		auth = Base64.decodeAsString(auth);
-		StringTokenizer tokenizer = new StringTokenizer(auth, ":");
-		String userId = tokenizer.nextToken();
-		String password = tokenizer.nextToken();
-		if (userService.verifyLogin(userId, password))
-			return;
-		else
-			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Incorrect id or password").build());
+		try {
+			String auth = headers.get(0);
+			auth = auth.replaceFirst(Back2School.AUTHORIZATION_HEADER_PREFIX, "");
+			auth = Base64.decodeAsString(auth);
+			StringTokenizer tokenizer = new StringTokenizer(auth, ":");
+			String userId = tokenizer.nextToken();
+			String password = tokenizer.nextToken();
+			if (userService.verifyLogin(userId, password))
+				return;
+			else
+				requestContext
+						.abortWith(Response.status(Status.UNAUTHORIZED).entity("Incorrect id or password").build());
+		} catch (NullPointerException e) {
+			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("You have to log in").build());
+		}
 	}
 }
