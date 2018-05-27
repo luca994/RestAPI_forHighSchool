@@ -36,10 +36,13 @@ public class NotificationResource {
 	public List<Notification> getNotifications(@Context ContainerRequestContext requestContext,
 			@QueryParam("type") String type) {
 		String userId = getUserId(requestContext);
+		if(type!=null) {
 		if (type.toLowerCase().equals("general"))
 			return notificationService.getGeneralNotifications(userId);
 		if (type.toLowerCase().equals("specific"))
 			return notificationService.getSpecificNotifications(userId);
+		return null;
+		}
 		return notificationService.getNotifications(userId);
 	}
 

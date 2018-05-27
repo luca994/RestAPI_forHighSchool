@@ -43,8 +43,9 @@ public class NotificationService {
 
 	public Response createNotification(String userId, String id, String text, String baseUri) {
 		UserService userService = new UserService();
-		if (text == null)
+		if (text == null) {
 			return Response.status(Status.BAD_REQUEST).build();
+		}
 		if (userService.isAdministrator(userId)) {
 			if (userService.isParent(id) || userService.isTeacher(id))
 				return createSpecificNotification(id, text, baseUri);
@@ -65,7 +66,9 @@ public class NotificationService {
 		List<Teacher> teachers = entityManager.createQuery("Select t from Teacher t").getResultList();
 		for (Parent p : parents) {
 			for (Student s : p.getStudents())
-				if (classroom.getStudents().contains(s)) {
+				for(Student s1:classroom.getStudents())
+					if(s1.getUserId().equals(s.getUserId()))
+				{
 					GeneralNotification newNotification = new GeneralNotification();
 					newNotification.setUser(p);
 					newNotification.setText(text);
