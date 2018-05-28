@@ -27,7 +27,7 @@ public class Grade {
 	@Column
 	private float mark;
 	@JoinColumn
-	@JsonIgnoreProperties({ "userId", "resources", "dateOfBirth" })
+	@JsonIgnoreProperties({ "resources", "dateOfBirth" })
 	private Teacher teacher;
 	@JoinColumn
 	private List<Link> resources;

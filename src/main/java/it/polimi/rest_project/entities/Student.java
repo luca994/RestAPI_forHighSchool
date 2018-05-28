@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
@@ -15,15 +16,20 @@ public class Student extends User {
 
 	@JoinColumn
 	private List<Grade> grades;
+	@JoinColumn
+	@JsonIgnoreProperties({ "students","resources", "dateOfBirth" })
+	private List<Parent> parents;
 
 	public Student() {
 		super();
 		grades = new ArrayList<Grade>();
+		parents = new ArrayList<Parent>();
 	}
 
 	public Student(String name, String surname, String password, Calendar dateOfBirth) {
 		super(name, surname, password, dateOfBirth);
 		grades = new ArrayList<Grade>();
+		parents = new ArrayList<Parent>();
 	}
 
 	public List<Grade> getGrades() {
@@ -32,6 +38,14 @@ public class Student extends User {
 
 	public void setGrades(List<Grade> grades) {
 		this.grades = grades;
+	}
+
+	public List<Parent> getParents() {
+		return parents;
+	}
+
+	public void setParents(List<Parent> parents) {
+		this.parents = parents;
 	}
 
 }

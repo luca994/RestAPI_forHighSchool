@@ -20,7 +20,7 @@ import it.polimi.rest_project.json.OptimizedDateSerializer;
 
 @Entity
 @Table(name = "Payments")
-@JsonPropertyOrder({ "paymentId", "date", "amount", "reason", "user", "done", "resources" })
+@JsonPropertyOrder({ "paymentId", "date", "amount", "reason","done", "user", "resources" })
 public class Payment {
 
 	@Id

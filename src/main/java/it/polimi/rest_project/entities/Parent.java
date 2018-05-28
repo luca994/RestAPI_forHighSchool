@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class Parent extends User {
 
 	@JoinColumn
+	@JsonIgnoreProperties({ "userId", "grades", "dateOfBirth","parents" })
 	private List<Student> students;
 
 	public Parent() {

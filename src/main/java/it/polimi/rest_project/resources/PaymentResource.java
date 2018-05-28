@@ -37,7 +37,7 @@ public class PaymentResource {
 	public List<Payment> getPayments(@Context ContainerRequestContext requestContext,@QueryParam("month") Integer month) {
 		String userId = getUserId(requestContext);
 		if(month!=null)
-			paymentService.getPaymentsMonthly(userId,month);
+			return paymentService.getPaymentsMonthly(userId,month);
 		return paymentService.getPayments(userId);
 	}
 
@@ -68,7 +68,7 @@ public class PaymentResource {
 	}
 
 	@PUT
-	@Path("paymentId")
+	@Path("{paymentId}")
 	public Response payPayment(@Context ContainerRequestContext requestContext,
 			@PathParam("paymentId") String paymentId) {
 		String userId = getUserId(requestContext);

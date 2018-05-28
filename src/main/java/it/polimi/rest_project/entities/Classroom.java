@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
 @Table(name = "Classrooms")
-@JsonPropertyOrder({ "students", "lectures", "resources" })
+@JsonPropertyOrder({ "classroomId","students", "lectures", "resources" })
 public class Classroom {
 
 	@Id

@@ -67,7 +67,7 @@ public class PaymentService {
 		if (userService.isAdministrator(userId))
 			return entityManager.createQuery("Select p from Payment p").getResultList();
 		if (userService.isParent(userId)) {
-			Query query = entityManager.createQuery("Select p from Payment p where p.user.userId=");
+			Query query = entityManager.createQuery("Select p from Payment p where p.user.userId=:userId");
 			query.setParameter("userId", userId);
 			return query.getResultList();
 		}
@@ -81,7 +81,7 @@ public class PaymentService {
 			if (userService.isAdministrator(userId)) {
 				query = entityManager.createQuery("Select p from Payment p");
 			} else {
-				query = entityManager.createQuery("Select p from Payment p where p.user.userId=");
+				query = entityManager.createQuery("Select p from Payment p where p.user.userId=:userId");
 				query.setParameter("userId", userId);
 			}
 			List<Payment> payments = query.getResultList();

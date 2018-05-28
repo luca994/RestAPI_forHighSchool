@@ -8,7 +8,9 @@ import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.polimi.rest_project.entities.Classroom;
 import it.polimi.rest_project.entities.Grade;
+import it.polimi.rest_project.entities.Lecture;
 import it.polimi.rest_project.entities.Link;
 import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.entities.Student;
@@ -43,15 +45,26 @@ public class GradeService {
 		return null;
 	}
 
+	private boolean isTeachingTo(String userId, String studentId) {
+		Query query = entityManager.createQuery("Select c from Classroom c");
+		List<Classroom> classrooms = query.getResultList();
+		Student targetStudent = entityManager.find(Student.class, studentId);
+		for (Classroom c : classrooms) {
+			if (c.getStudents().contains(targetStudent))
+				for (Lecture l : c.getLectures())
+					if (l.getTeacher().getUserId().equals(userId))
+						return true;
+		}
+		return false;
+	}
+
 	public Response createGrade(String userId, String studentId, String subject, String mark, String baseUri) {
 		UserService userService = new UserService();
 		if (subject == null || mark == null || studentId == null)
 			return Response.status(Status.BAD_REQUEST).build();
 		if (userService.isTeacher(userId) && userService.isStudent(studentId)) {
 			Student targetStudent = entityManager.find(Student.class, studentId);
-			Query query = entityManager.createQuery("Select c.lectures from Classroom c where :student in c.students");
-			query.setParameter("student", targetStudent);
-			if (query.getResultList().size() >= 1) {
+			if (isTeachingTo(userId, studentId)) {
 				Grade newGrade = new Grade();
 				newGrade.setSubject(subject);
 				newGrade.setMark(Float.parseFloat(mark));

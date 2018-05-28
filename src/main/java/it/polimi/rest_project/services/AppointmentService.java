@@ -61,10 +61,12 @@ public class AppointmentService {
 
 	public Response createAppointment(String userId, String user2Id, Integer day, Integer month, Integer year,
 			String baseUri) {
-		if (day == null || month == null || year == null)
-			return Response.status(Status.BAD_REQUEST).build();
+		if (day == null || month == null || year == null
+				|| new GregorianCalendar().after(new GregorianCalendar(year, month, day)))
+			return Response.status(Status.BAD_REQUEST).entity("Incorrect date").build();
 		UserService userService = new UserService();
 		Appointment newAppointment = new Appointment();
+		System.out.println();
 		if (userService.isParent(userId) && userService.isTeacher(user2Id)) {
 			if (areAvailable(userId, user2Id, day, month, year) == false)
 				return Response.status(Status.BAD_REQUEST).entity("One of the two person is busy in that date").build();

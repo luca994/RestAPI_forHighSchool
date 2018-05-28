@@ -18,8 +18,7 @@ public class StudentService extends UserService {
 	}
 
 	public Student getStudent(String userId, String studentId) {
-		boolean isAuthorized = isAuthorized(userId, studentId);
-		if (isAuthorized && isStudent(studentId))
+		if (isAuthorized(userId, studentId) && isStudent(studentId))
 			return entityManager.find(Student.class, studentId);
 		return null;
 	}
