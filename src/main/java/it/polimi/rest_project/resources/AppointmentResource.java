@@ -10,20 +10,17 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.internal.util.Base64;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Appointment;
 import it.polimi.rest_project.services.AppointmentService;
-import it.polimi.rest_project.services.Back2School;
 
-@Produces(MediaType.APPLICATION_JSON)
 @Path("appointments")
 public class AppointmentResource {
 
@@ -73,10 +70,11 @@ public class AppointmentResource {
 		String userId = getUserId(requestContext);
 		return appointmentService.createAppointment(userId, user2Id, day, month, year, uriInfo.getBaseUri().toString());
 	}
-	
+
 	@DELETE
 	@Path("{appointmentId}")
-	public Response deleteAppointment(@Context ContainerRequestContext requestContext,@PathParam("appointmentId") String appointmentId) {
+	public Response deleteAppointment(@Context ContainerRequestContext requestContext,
+			@PathParam("appointmentId") String appointmentId) {
 		String userId = getUserId(requestContext);
 		return appointmentService.deleteAppointment(userId, appointmentId);
 	}

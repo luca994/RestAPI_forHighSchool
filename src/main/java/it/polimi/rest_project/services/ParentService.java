@@ -64,7 +64,7 @@ public class ParentService extends UserService {
 			entityManager.getTransaction().begin();
 			entityManager.persist(newParent);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newParent).build();
+			return Response.created(newParent.getResources().get(0).getHref()).entity(newParent).build();
 		}
 		return Response.status(Status.UNAUTHORIZED).build();
 	}

@@ -54,7 +54,7 @@ public class AdministratorService extends UserService {
 			entityManager.getTransaction().begin();
 			entityManager.persist(newAdministrator);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newAdministrator).build();
+			return Response.created(newAdministrator.getResources().get(0).getHref()).entity(newAdministrator).build();
 		}
 		return Response.status(Status.UNAUTHORIZED).build();
 	}

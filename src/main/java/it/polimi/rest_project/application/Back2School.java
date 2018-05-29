@@ -1,4 +1,4 @@
-package it.polimi.rest_project.services;
+package it.polimi.rest_project.application;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -9,6 +9,7 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import it.polimi.rest_project.security.SecurityManager;
+import it.polimi.rest_project.services.UserService;
 
 @ApplicationPath("b2s")
 public class Back2School extends ResourceConfig {
@@ -20,6 +21,7 @@ public class Back2School extends ResourceConfig {
 
 	public Back2School() {
 		packages("it.polimi.rest_project.resources");
+		packages(true, "com.fasterxml.jackson.jaxrs");
 		register(SecurityManager.class);
 		register(JacksonFeature.class);
 		UserService userService = new UserService();
@@ -29,5 +31,4 @@ public class Back2School extends ResourceConfig {
 	public static EntityManager getEntityManager() {
 		return emfactory.createEntityManager();
 	}
-
 }

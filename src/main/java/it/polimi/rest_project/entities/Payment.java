@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+
+import org.apache.commons.text.RandomStringGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -20,7 +21,7 @@ import it.polimi.rest_project.json.OptimizedDateSerializer;
 
 @Entity
 @Table(name = "Payments")
-@JsonPropertyOrder({ "paymentId", "date", "amount", "reason","done", "user", "resources" })
+@JsonPropertyOrder({ "paymentId", "date", "amount", "reason", "done", "user", "resources" })
 public class Payment {
 
 	@Id
@@ -41,10 +42,11 @@ public class Payment {
 	private List<Link> resources;
 
 	public Payment() {
-		Long random = new Random().nextLong();
-		this.paymentId = Long.toUnsignedString(random);
+		char[][] range = { { 'a', 'z' }, { '0', '9' } };
+		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(range).build();
+		this.paymentId = generator.generate(8);
 		date = new GregorianCalendar();
-		this.resources=new ArrayList<Link>();
+		this.resources = new ArrayList<Link>();
 		done = false;
 	}
 

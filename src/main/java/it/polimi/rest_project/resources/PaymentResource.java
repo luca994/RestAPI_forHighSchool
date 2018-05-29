@@ -9,21 +9,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.internal.util.Base64;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Payment;
-import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.PaymentService;
 
-@Produces(MediaType.APPLICATION_JSON)
 @Path("payments")
 public class PaymentResource {
 
@@ -34,10 +31,11 @@ public class PaymentResource {
 	}
 
 	@GET
-	public List<Payment> getPayments(@Context ContainerRequestContext requestContext,@QueryParam("month") Integer month) {
+	public List<Payment> getPayments(@Context ContainerRequestContext requestContext,
+			@QueryParam("month") Integer month) {
 		String userId = getUserId(requestContext);
-		if(month!=null)
-			return paymentService.getPaymentsMonthly(userId,month);
+		if (month != null)
+			return paymentService.getPaymentsMonthly(userId, month);
 		return paymentService.getPayments(userId);
 	}
 

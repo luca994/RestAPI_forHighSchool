@@ -53,7 +53,7 @@ public class TeacherService extends UserService {
 			entityManager.getTransaction().begin();
 			entityManager.persist(newTeacher);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newTeacher).build();
+			return Response.created(newTeacher.getResources().get(0).getHref()).entity(newTeacher).build();
 		}
 		return Response.status(Status.UNAUTHORIZED).build();
 	}

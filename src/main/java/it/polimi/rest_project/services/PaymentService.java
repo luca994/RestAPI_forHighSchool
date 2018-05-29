@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Link;
 import it.polimi.rest_project.entities.Parent;
 import it.polimi.rest_project.entities.Payment;
@@ -40,7 +41,7 @@ public class PaymentService {
 			entityManager.getTransaction().begin();
 			entityManager.persist(newPayment);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newPayment).build();
+			return Response.created(newPayment.getResources().get(0).getHref()).entity(newPayment).build();
 		}
 		return Response.status(Status.UNAUTHORIZED).build();
 	}

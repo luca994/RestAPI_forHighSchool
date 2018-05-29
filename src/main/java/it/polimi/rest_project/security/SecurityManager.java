@@ -14,8 +14,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.glassfish.jersey.internal.util.Base64;
 
-import it.polimi.rest_project.services.AdministratorService;
-import it.polimi.rest_project.services.Back2School;
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.services.UserService;
 
 @Provider
@@ -24,7 +23,7 @@ public class SecurityManager implements ContainerRequestFilter {
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-		UserService userService = new AdministratorService();
+		UserService userService = new UserService();
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
 		try {
 			String auth = headers.get(0);

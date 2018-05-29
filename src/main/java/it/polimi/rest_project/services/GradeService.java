@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Classroom;
 import it.polimi.rest_project.entities.Grade;
 import it.polimi.rest_project.entities.Lecture;
@@ -75,7 +76,7 @@ public class GradeService {
 				entityManager.persist(newGrade);
 				entityManager.persist(targetStudent);
 				entityManager.getTransaction().commit();
-				return Response.status(Status.CREATED).entity(newGrade).build();
+				return Response.created(newGrade.getResources().get(0).getHref()).entity(newGrade).build();
 			} else
 				return Response.status(Status.UNAUTHORIZED).build();
 		} else
@@ -101,7 +102,7 @@ public class GradeService {
 	}
 
 	private void addResources(Grade grade, String baseUri) {
-		Link self = new Link(baseUri + "grades" + "/" + grade.getGradeId(), "self");
+		Link self = new Link(baseUri + "/" + grade.getGradeId(), "self");
 		grade.getResources().add(self);
 	}
 

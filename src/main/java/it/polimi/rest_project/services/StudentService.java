@@ -28,7 +28,7 @@ public class StudentService extends UserService {
 		Query queryAdmin = entityManager.createQuery("select a from Administrator a where a.userId=:userId");
 		queryAdmin.setParameter("userId", userId);
 		Query queryParent = entityManager.createQuery("select p from Parent p where p.userId=:userId");
-		queryAdmin.setParameter("userId", userId);
+		queryParent.setParameter("userId", userId);
 		if (queryAdmin.getResultList().size() == 1)
 			isAuthorized = true;
 		if (queryParent.getResultList().size() == 1) {
@@ -73,7 +73,7 @@ public class StudentService extends UserService {
 			entityManager.getTransaction().begin();
 			entityManager.persist(newStudent);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newStudent).build();
+			return Response.created(newStudent.getResources().get(0).getHref()).entity(newStudent).build();
 		}
 		return Response.status(Status.UNAUTHORIZED).build();
 	}

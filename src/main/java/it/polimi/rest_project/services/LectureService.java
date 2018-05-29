@@ -7,6 +7,7 @@ import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Classroom;
 import it.polimi.rest_project.entities.Lecture;
 import it.polimi.rest_project.entities.Link;
@@ -53,14 +54,14 @@ public class LectureService {
 			entityManager.persist(newLecture);
 			entityManager.persist(targetClassroom);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newLecture).build();
+			return Response.created(newLecture.getResources().get(0).getHref()).entity(newLecture).build();
 		} else
 			return Response.status(Status.UNAUTHORIZED).build();
 
 	}
 
 	private void addResources(Lecture lecture, String baseUri) {
-		Link self = new Link(baseUri + "lectures" + "/" + lecture.getId(), "self");
+		Link self = new Link(baseUri + "/" + lecture.getId(), "self");
 		lecture.getResources().add(self);
 	}
 

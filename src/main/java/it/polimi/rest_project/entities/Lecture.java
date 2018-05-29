@@ -3,13 +3,14 @@ package it.polimi.rest_project.entities;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+
+import org.apache.commons.text.RandomStringGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,8 +37,9 @@ public class Lecture {
 	private List<Link> resources;
 
 	public Lecture() {
-		Long random = new Random().nextLong();
-		this.id = Long.toUnsignedString(random);
+		char[][] range = { { 'a', 'z' }, { '0', '9' } };
+		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(range).build();
+		this.id = generator.generate(8);
 		this.resources = new ArrayList<Link>();
 	}
 

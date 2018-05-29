@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Administrator;
 
 public class UserService {

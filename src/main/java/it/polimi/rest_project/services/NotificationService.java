@@ -7,6 +7,7 @@ import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Classroom;
 import it.polimi.rest_project.entities.GeneralNotification;
 import it.polimi.rest_project.entities.Lecture;
@@ -133,7 +134,7 @@ public class NotificationService {
 		entityManager.getTransaction().begin();
 		entityManager.persist(newNotification);
 		entityManager.getTransaction().commit();
-		return Response.status(Status.CREATED).entity(newNotification).build();
+		return Response.created(newNotification.getResources().get(0).getHref()).entity(newNotification).build();
 	}
 
 	private void addResources(Notification notification, String baseUri) {

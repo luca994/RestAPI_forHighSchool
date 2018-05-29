@@ -8,21 +8,18 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.internal.util.Base64;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Notification;
-import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.NotificationService;
 
-@Produces(MediaType.APPLICATION_JSON)
 @Path("notifications")
 public class NotificationResource {
 
@@ -36,12 +33,12 @@ public class NotificationResource {
 	public List<Notification> getNotifications(@Context ContainerRequestContext requestContext,
 			@QueryParam("type") String type) {
 		String userId = getUserId(requestContext);
-		if(type!=null) {
-		if (type.toLowerCase().equals("general"))
-			return notificationService.getGeneralNotifications(userId);
-		if (type.toLowerCase().equals("specific"))
-			return notificationService.getSpecificNotifications(userId);
-		return null;
+		if (type != null) {
+			if (type.toLowerCase().equals("general"))
+				return notificationService.getGeneralNotifications(userId);
+			if (type.toLowerCase().equals("specific"))
+				return notificationService.getSpecificNotifications(userId);
+			return null;
 		}
 		return notificationService.getNotifications(userId);
 	}

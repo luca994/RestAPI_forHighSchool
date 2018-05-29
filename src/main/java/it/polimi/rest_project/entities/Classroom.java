@@ -2,7 +2,6 @@ package it.polimi.rest_project.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -10,12 +9,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
+import org.apache.commons.text.RandomStringGenerator;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
 @Table(name = "Classrooms")
-@JsonPropertyOrder({ "classroomId","students", "lectures", "resources" })
+@JsonPropertyOrder({ "classroomId", "students", "lectures", "resources" })
 public class Classroom {
 
 	@Id
@@ -30,8 +31,9 @@ public class Classroom {
 
 	public Classroom() {
 		students = new ArrayList<Student>();
-		Long random = new Random().nextLong();
-		this.classroomId = Long.toUnsignedString(random);
+		char[][] range = { { 'a', 'z' }, { '0', '9' } };
+		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(range).build();
+		this.classroomId = generator.generate(8);
 		this.resources = new ArrayList<Link>();
 	}
 

@@ -10,21 +10,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.internal.util.Base64;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Grade;
-import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.GradeService;
 
-@Produces(MediaType.APPLICATION_JSON)
-@Path("grades")
+
 public class GradeResource {
 
 	private GradeService gradeService;
@@ -58,10 +55,10 @@ public class GradeResource {
 
 	@POST
 	public Response addGrade(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
-			@FormParam("studentId") String studentId, @FormParam("subject") String subject,
+			@PathParam("studentId") String studentId, @FormParam("subject") String subject,
 			@FormParam("mark") String mark) {
 		String userId = getUserId(requestContext);
-		return gradeService.createGrade(userId, studentId, subject, mark, uriInfo.getBaseUri().toString());
+		return gradeService.createGrade(userId, studentId, subject, mark, uriInfo.getAbsolutePath().toString());
 	}
 
 	@PUT
@@ -71,13 +68,12 @@ public class GradeResource {
 		String userId = getUserId(requestContext);
 		return gradeService.updateGrade(userId, gradeId, mark);
 	}
-	
+
 	@DELETE
 	@Path("{gradeId}")
 	public Response deleteGrade(@PathParam("gradeId") String gradeId, @Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return gradeService.deleteGrade(userId, gradeId);
 	}
-	
 
 }

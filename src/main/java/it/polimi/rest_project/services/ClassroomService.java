@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Classroom;
 import it.polimi.rest_project.entities.Lecture;
 import it.polimi.rest_project.entities.Link;
@@ -97,7 +98,7 @@ public class ClassroomService {
 			entityManager.getTransaction().begin();
 			entityManager.persist(newClassroom);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newClassroom).build();
+			return Response.created(newClassroom.getResources().get(0).getHref()).entity(newClassroom).build();
 		}
 		return Response.status(Status.UNAUTHORIZED).build();
 	}

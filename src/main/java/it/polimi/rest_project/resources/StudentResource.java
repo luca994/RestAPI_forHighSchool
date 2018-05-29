@@ -9,21 +9,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.internal.util.Base64;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Student;
-import it.polimi.rest_project.services.Back2School;
 import it.polimi.rest_project.services.StudentService;
 
-@Produces(MediaType.APPLICATION_JSON)
 @Path("students")
 public class StudentResource {
 
@@ -34,12 +31,13 @@ public class StudentResource {
 	}
 
 	@GET
-	public List<Student> getStudents(@Context ContainerRequestContext requestContext,@QueryParam("classroomId") String classId) {
+	public List<Student> getStudents(@Context ContainerRequestContext requestContext,
+			@QueryParam("classroomId") String classId) {
 		String userId = getUserId(requestContext);
-		if(classId!=null)
-			return studentService.getStudentsInClassroom(userId,classId);
+		if (classId != null)
+			return studentService.getStudentsInClassroom(userId, classId);
 		return studentService.getStudents(userId);
-		
+
 	}
 
 	@GET
@@ -75,7 +73,13 @@ public class StudentResource {
 			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") Integer year,
 			@FormParam("month") Integer month, @FormParam("day") Integer day, @FormParam("password") String password) {
 		String userId = getUserId(requestContext);
-		return studentService.createStudent(userId, name, surname, year, month, day,password, uriInfo.getBaseUri().toString());
+		return studentService.createStudent(userId, name, surname, year, month, day, password,
+				uriInfo.getBaseUri().toString());
+	}
+
+	@Path("{studentId}/grades")
+	public GradeResource getGradeResource() {
+		return new GradeResource();
 	}
 
 }

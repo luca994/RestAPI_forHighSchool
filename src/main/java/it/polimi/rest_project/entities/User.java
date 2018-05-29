@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+
+import org.apache.commons.text.RandomStringGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -42,18 +43,20 @@ public abstract class User {
 	private List<Link> resources;
 
 	public User() {
-		Long random = new Random().nextLong();
-		this.userId = Long.toUnsignedString(random);
+		char[][] range = { { 'a', 'z' }, { '0', '9' } };
+		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(range).build();
+		this.userId = generator.generate(8);
 		this.resources = new ArrayList<Link>();
 		this.dateOfBirth = new GregorianCalendar();
 	}
-	
-	public User(String name,String surname,String password,Calendar dateOfBirth) {
-		Long random = new Random().nextLong();
-		this.userId = Long.toUnsignedString(random);
-		this.name=name;
-		this.surname=surname;
-		this.dateOfBirth=dateOfBirth;
+
+	public User(String name, String surname, String password, Calendar dateOfBirth) {
+		char[][] range = { { 'a', 'z' }, { '0', '9' } };
+		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(range).build();
+		this.userId = generator.generate(8);
+		this.name = name;
+		this.surname = surname;
+		this.dateOfBirth = dateOfBirth;
 		this.resources = new ArrayList<Link>();
 		setPassword(password);
 	}

@@ -3,13 +3,14 @@ package it.polimi.rest_project.entities;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+
+import org.apache.commons.text.RandomStringGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,12 +21,16 @@ import it.polimi.rest_project.json.OptimizedDateSerializer;
 
 @Entity
 @Table(name = "Appointments")
-@JsonPropertyOrder({ "date", "teacher", "parent", "resources" })
+@JsonPropertyOrder({ "date", "accepted", "teacher", "parent", "resources" })
 public class Appointment {
 
 	@Id
 	@JsonIgnore
 	private String appointmentId;
+	@Column
+	private boolean TeacherConfirmation;
+	@Column
+	private boolean ParentConfirmation;
 	@Column
 	@JsonSerialize(using = OptimizedDateSerializer.class)
 	private Calendar date;
@@ -39,9 +44,12 @@ public class Appointment {
 	private List<Link> resources;
 
 	public Appointment() {
-		Long random = new Random().nextLong();
-		this.appointmentId = Long.toUnsignedString(random);
-		this.resources=new ArrayList<Link>();
+		char[][] range = { { 'a', 'z' }, { '0', '9' } };
+		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(range).build();
+		this.appointmentId = generator.generate(8);
+		this.resources = new ArrayList<Link>();
+		this.TeacherConfirmation = false;
+		this.ParentConfirmation = false;
 	}
 
 	public String getAppointmentId() {
@@ -82,6 +90,22 @@ public class Appointment {
 
 	public void setResources(List<Link> resources) {
 		this.resources = resources;
+	}
+
+	public boolean isTeacherConfirmation() {
+		return TeacherConfirmation;
+	}
+
+	public boolean isParentConfirmation() {
+		return ParentConfirmation;
+	}
+
+	public void setTeacherConfirmation(boolean teacherConfirmation) {
+		TeacherConfirmation = teacherConfirmation;
+	}
+
+	public void setParentConfirmation(boolean parentConfirmation) {
+		ParentConfirmation = parentConfirmation;
 	}
 
 

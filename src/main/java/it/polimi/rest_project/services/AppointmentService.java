@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.entities.Appointment;
 import it.polimi.rest_project.entities.Link;
 import it.polimi.rest_project.entities.Parent;
@@ -45,12 +46,17 @@ public class AppointmentService {
 	public Response updateAppointment(String userId, String appointmentId, Integer day, Integer month, Integer year) {
 		if (isAuthorized(userId, appointmentId)) {
 			Appointment targetAppointment = entityManager.find(Appointment.class, appointmentId);
-			if (day == null || month == null || year == null)
-				return Response.status(Status.BAD_REQUEST).build();
-			if (areAvailable(targetAppointment.getParent().getUserId(), targetAppointment.getTeacher().getUserId(), day,
-					month, year) == false)
-				return Response.status(Status.BAD_REQUEST).entity("One of the two person is busy in that date").build();
-			targetAppointment.setDate(new GregorianCalendar(year, month - 1, day));
+			if (day != null || month != null || year != null) {
+				if (areAvailable(targetAppointment.getParent().getUserId(), targetAppointment.getTeacher().getUserId(),
+						day, month, year) == false)
+					return Response.status(Status.BAD_REQUEST).build();
+				targetAppointment.setDate(new GregorianCalendar(year, month - 1, day));
+			}
+			UserService userService = new UserService();
+			if (userService.isParent(userId))
+				targetAppointment.setParentConfirmation(true);
+			else
+				targetAppointment.setTeacherConfirmation(true);
 			entityManager.getTransaction().begin();
 			entityManager.persist(targetAppointment);
 			entityManager.getTransaction().commit();
@@ -73,23 +79,25 @@ public class AppointmentService {
 			newAppointment.setParent(entityManager.find(Parent.class, userId));
 			newAppointment.setTeacher(entityManager.find(Teacher.class, user2Id));
 			newAppointment.setDate(new GregorianCalendar(year, month - 1, day));
+			newAppointment.setParentConfirmation(true);
 			addResources(newAppointment, baseUri);
 			entityManager.getTransaction().begin();
 			entityManager.persist(newAppointment);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newAppointment).build();
+			return Response.created(newAppointment.getResources().get(0).getHref()).entity(newAppointment).build();
 		}
 		if (userService.isParent(user2Id) && userService.isTeacher(userId)) {
 			if (areAvailable(userId, user2Id, day, month, year) == false)
-				return Response.status(Status.BAD_REQUEST).entity("One of the two person is busy in that date").build();
+				return Response.status(Status.BAD_REQUEST).build();
 			newAppointment.setParent(entityManager.find(Parent.class, user2Id));
 			newAppointment.setTeacher(entityManager.find(Teacher.class, userId));
 			newAppointment.setDate(new GregorianCalendar(year, month - 1, day));
+			newAppointment.setTeacherConfirmation(true);
 			addResources(newAppointment, baseUri);
 			entityManager.getTransaction().begin();
 			entityManager.persist(newAppointment);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.CREATED).entity(newAppointment).build();
+			return Response.created(newAppointment.getResources().get(0).getHref()).entity(newAppointment).build();
 		}
 		return Response.status(Status.BAD_REQUEST).build();
 	}
