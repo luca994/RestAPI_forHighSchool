@@ -84,8 +84,8 @@ public class ClassroomResource {
 	}
 	
 	@Path("{classroomId}/lectures")
-	public GradeResource getGradeResource() {
-		return new GradeResource();
+	public LectureResource getGradeResource() {
+		return new LectureResource();
 	}
 
 }

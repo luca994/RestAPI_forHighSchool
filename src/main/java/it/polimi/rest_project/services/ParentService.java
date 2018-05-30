@@ -33,7 +33,7 @@ public class ParentService extends UserService {
 	public Response updateParentData(String id, String name, String surname, String childId, Integer day, Integer month,
 			Integer year) {
 		Parent targetParent = entityManager.find(Parent.class, id);
-		Student targetStudent=null;
+		Student targetStudent = null;
 		if (name != null)
 			targetParent.setName(name);
 		if (surname != null)
@@ -42,13 +42,14 @@ public class ParentService extends UserService {
 			targetParent.setDateOfBirth(new GregorianCalendar(year, month - 1, day));
 		if (childId != null && isStudent(childId)) {
 			targetStudent = entityManager.find(Student.class, childId);
-			targetParent.getStudents().add(targetStudent);
-			targetStudent.getParents().add(targetParent);
+			if (!targetParent.getStudents().contains(targetStudent)) {
+				targetParent.getStudents().add(targetStudent);
+				targetStudent.getParents().add(targetParent);
+			}
 		}
-
 		entityManager.getTransaction().begin();
 		entityManager.persist(targetParent);
-		if (targetStudent!=null)
+		if (targetStudent != null)
 			entityManager.persist(targetStudent);
 		entityManager.getTransaction().commit();
 		return Response.status(Status.OK).entity(targetParent).build();

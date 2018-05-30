@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -42,8 +43,8 @@ public class Payment {
 	private List<Link> resources;
 
 	public Payment() {
-		char[][] range = { { 'a', 'z' }, { '0', '9' } };
-		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(range).build();
+		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', 'z')
+				.filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS).build();
 		this.paymentId = generator.generate(8);
 		date = new GregorianCalendar();
 		this.resources = new ArrayList<Link>();

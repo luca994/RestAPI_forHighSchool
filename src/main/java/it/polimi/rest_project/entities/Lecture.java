@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,8 +38,8 @@ public class Lecture {
 	private List<Link> resources;
 
 	public Lecture() {
-		char[][] range = { { 'a', 'z' }, { '0', '9' } };
-		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(range).build();
+		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', 'z')
+				.filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS).build();
 		this.id = generator.generate(8);
 		this.resources = new ArrayList<Link>();
 	}

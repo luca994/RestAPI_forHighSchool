@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -40,8 +41,8 @@ public abstract class Notification {
 	private List<Link> resources;
 
 	public Notification() {
-		char[][] range = { { 'a', 'z' }, { '0', '9' } };
-		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(range).build();
+		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', 'z')
+				.filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS).build();
 		this.id = generator.generate(8);
 		date = new GregorianCalendar();
 		this.resources = new ArrayList<Link>();
