@@ -24,8 +24,11 @@ public class ParentService extends UserService {
 
 	public Response updateData(String userId, String parentId, String name, String surname, String childId, Integer day,
 			Integer month, Integer year) {
-		if (userId.equals(parentId) || isAdministrator(userId))
+		if (isAdministrator(userId))
 			return updateParentData(parentId, name, surname, childId, day, month, year);
+		else if(userId.equals(parentId) && childId==null) {
+			return updateParentData(parentId, name, surname, childId, day, month, year);
+		}
 		else
 			return Response.status(Status.UNAUTHORIZED).build();
 	}

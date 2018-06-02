@@ -35,7 +35,7 @@ public class Payment {
 	@Column
 	private String reason;
 	@JoinColumn
-	@JsonIgnoreProperties({ "userId", "dateOfBirth" })
+	@JsonIgnoreProperties({ "userId", "dateOfBirth","students","resources" })
 	private User user;
 	@Column
 	private boolean done;

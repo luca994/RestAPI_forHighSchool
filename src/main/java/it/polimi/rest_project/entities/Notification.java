@@ -35,7 +35,7 @@ public abstract class Notification {
 	@JsonSerialize(using = OptimizedDateSerializer.class)
 	private Calendar date;
 	@JoinColumn
-	@JsonIgnoreProperties({ "userId", "dateOfBirth" })
+	@JsonIgnoreProperties({ "userId", "dateOfBirth","students","resources" })
 	private User user;
 	@JoinColumn
 	private List<Link> resources;

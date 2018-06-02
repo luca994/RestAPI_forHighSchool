@@ -80,7 +80,9 @@ public class StudentService extends UserService {
 
 	private void addResources(Student student, String baseUri) {
 		Link self = new Link(baseUri + "students" + "/" + student.getUserId(), "self");
+		Link grades = new Link(baseUri + "students" + "/" + student.getUserId() + "/" + "grades", "grades");
 		student.getResources().add(self);
+		student.getResources().add(grades);
 	}
 
 	public List<Student> getStudentsInClassroom(String userId, String classroomId) {

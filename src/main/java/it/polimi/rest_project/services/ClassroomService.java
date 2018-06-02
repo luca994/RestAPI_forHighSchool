@@ -105,7 +105,9 @@ public class ClassroomService {
 
 	private void addResources(Classroom classrooms, String baseUri) {
 		Link self = new Link(baseUri + "classrooms" + "/" + classrooms.getClassroomId(), "self");
+		Link lectures = new Link(baseUri + "classrooms" + "/" + classrooms.getClassroomId()+"/"+"lectures", "lectures");
 		classrooms.getResources().add(self);
+		classrooms.getResources().add(lectures);
 	}
 
 	public List<Classroom> getClassrooms(String userId) {

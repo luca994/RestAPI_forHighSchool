@@ -61,11 +61,9 @@ public class TeacherService extends UserService {
 	private void addResources(Teacher teacher, String baseUri) {
 		Link self = new Link(baseUri + "teachers" + "/" + teacher.getUserId(), "self");
 		Link classrooms = new Link(baseUri + "classrooms", "classrooms");
-		Link grades = new Link(baseUri + "grades", "grades");
 		Link appointments = new Link(baseUri + "appointments", "appointments");
 		teacher.getResources().add(self);
 		teacher.getResources().add(classrooms);
-		teacher.getResources().add(grades);
 		teacher.getResources().add(appointments);
 	}
 
