@@ -53,7 +53,7 @@ public class ClassroomService {
 			try {
 				Classroom targetClass = entityManager.find(Classroom.class, classroomId);
 				if (!userService.isStudent(studentId))
-					return Response.status(Status.BAD_REQUEST).build();
+					return Response.status(Status.BAD_REQUEST).entity("The user to add to a class must be a student").build();
 				Student targetStudent = entityManager.find(Student.class, studentId);
 				targetClass.getStudents().add(targetStudent);
 				entityManager.getTransaction().begin();
@@ -64,7 +64,7 @@ public class ClassroomService {
 				return Response.status(Status.NOT_FOUND).build();
 			}
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		return Response.status(Status.UNAUTHORIZED).entity("You must be logged as an administrator to add a student to a class").build();
 	}
 
 	public Response addLectureToClass(String userId, String classroomId, String lectureId) {
@@ -77,7 +77,7 @@ public class ClassroomService {
 				query.setParameter("lecture", targetLecture);
 				if (query.getResultList().size() != 0)
 					return Response.status(Status.BAD_REQUEST)
-							.entity("this lecture is already associated to a classroom").build();
+							.entity("This lecture is already associated to a classroom").build();
 				targetClass.getLectures().add(targetLecture);
 				entityManager.getTransaction().begin();
 				entityManager.persist(targetClass);
@@ -87,7 +87,7 @@ public class ClassroomService {
 				return Response.status(Status.NOT_FOUND).build();
 			}
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		return Response.status(Status.UNAUTHORIZED).entity("You must be logged as an administrator to add a lecture to a class").build();
 	}
 
 	public Response createClassroom(String userId, String classroomId, String baseUri) {
@@ -100,9 +100,12 @@ public class ClassroomService {
 			entityManager.getTransaction().commit();
 			return Response.created(newClassroom.getResources().get(0).getHref()).entity(newClassroom).build();
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		return Response.status(Status.UNAUTHORIZED).entity("You must be logged as an administrator to create a classroom").build();
 	}
 
+	/**
+	 * Adds the accessible resources to the entity
+	 */
 	private void addResources(Classroom classrooms, String baseUri) {
 		Link self = new Link(baseUri + "classrooms" + "/" + classrooms.getClassroomId(), "self");
 		Link lectures = new Link(baseUri + "classrooms" + "/" + classrooms.getClassroomId()+"/"+"lectures", "lectures");
@@ -133,9 +136,9 @@ public class ClassroomService {
 			entityManager.getTransaction().begin();
 			entityManager.remove(toDelete);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.NO_CONTENT).entity("Deleted").build();
+			return Response.status(Status.NO_CONTENT).entity("Classroom "+classroomId+" deleted").build();
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		return Response.status(Status.UNAUTHORIZED).entity("You must be logged as an administrator to delete a classroom").build();
 	}
 
 }

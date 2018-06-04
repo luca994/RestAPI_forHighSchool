@@ -1,5 +1,7 @@
 package it.polimi.rest_project.resources;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -23,18 +25,29 @@ import it.polimi.rest_project.services.AdministratorService;
 @Path("admins")
 public class AdministratorResource {
 
+	/** The administrator service used by the resource */
 	private AdministratorService administratorService;
 
+	/**
+	 * Default constructor that initializes the service used by the resource
+	 */
 	public AdministratorResource() {
 		administratorService = new AdministratorService();
 	}
 
+	/**
+	 * Returns the list of administrators that can be viewed by the user
+	 */
 	@GET
-	public List<Administrator> getAdministrators(@Context ContainerRequestContext requestContext) {
+	public List<Administrator> getAdministrators(@Context ContainerRequestContext requestContext)
+			throws IOException, NoSuchAlgorithmException {
 		String userId = getUserId(requestContext);
 		return administratorService.getAdministrators(userId);
 	}
 
+	/**
+	 * Returns the administrator if it can be viewed by the user
+	 */
 	@GET
 	@Path("{adminId}")
 	public Administrator getAdministrator(@PathParam("adminId") String adminId,
@@ -43,6 +56,13 @@ public class AdministratorResource {
 		return administratorService.getAdministrator(userId, adminId);
 	}
 
+	/**
+	 * Gets the userId of the user who made the request
+	 * 
+	 * @param requestContext
+	 *            the request context of this call
+	 * @return the id of the user who made the request
+	 */
 	private String getUserId(ContainerRequestContext requestContext) {
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
 		String auth = headers.get(0);
@@ -53,6 +73,9 @@ public class AdministratorResource {
 		return userId;
 	}
 
+	/**
+	 * Updates the resource with the parameters taken as input
+	 */
 	@PUT
 	@Path("{adminId}")
 	public Response updateAdministrator(@PathParam("adminId") String adminId,
@@ -63,6 +86,9 @@ public class AdministratorResource {
 		return administratorService.updateData(userId, adminId, name, surname, year, month, day);
 	}
 
+	/**
+	 * Creates a resource with the parameters taken as input if the user who made the request is allowed to do it
+	 */
 	@POST
 	public Response createAdministrator(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
 			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") Integer year,

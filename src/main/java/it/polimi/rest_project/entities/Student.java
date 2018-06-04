@@ -14,10 +14,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({ "userId", "name", "surname", "dateOfBirth", "grades", "resources" })
 public class Student extends User {
 
+	
+	private static final long serialVersionUID = -3489086630776667506L;
 	@JoinColumn
 	private List<Grade> grades;
 	@JoinColumn
-	@JsonIgnoreProperties({ "students","resources", "dateOfBirth" })
+	@JsonIgnoreProperties({ "students", "resources", "dateOfBirth" })
 	private List<Parent> parents;
 
 	public Student() {
@@ -32,18 +34,32 @@ public class Student extends User {
 		parents = new ArrayList<Parent>();
 	}
 
+	/**
+	 * @return the grades
+	 */
 	public List<Grade> getGrades() {
 		return grades;
 	}
 
-	public void setGrades(List<Grade> grades) {
-		this.grades = grades;
-	}
-
+	/**
+	 * @return the parents
+	 */
 	public List<Parent> getParents() {
 		return parents;
 	}
 
+	/**
+	 * @param grades
+	 *            the grades to set
+	 */
+	public void setGrades(List<Grade> grades) {
+		this.grades = grades;
+	}
+
+	/**
+	 * @param parents
+	 *            the parents to set
+	 */
 	public void setParents(List<Parent> parents) {
 		this.parents = parents;
 	}

@@ -137,6 +137,9 @@ public class NotificationService {
 		return Response.created(newNotification.getResources().get(0).getHref()).entity(newNotification).build();
 	}
 
+	/**
+	 * Adds the accessible resources to the entity
+	 */
 	private void addResources(Notification notification, String baseUri) {
 		Link self = new Link(baseUri + "notifications" + "/" + notification.getId(), "self");
 		notification.getResources().add(self);

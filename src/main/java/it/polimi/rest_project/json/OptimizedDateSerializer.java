@@ -8,6 +8,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
+/**
+ * The specific dates serializer
+ *
+ */
 public class OptimizedDateSerializer extends JsonSerializer<Calendar> {
 
 	@Override

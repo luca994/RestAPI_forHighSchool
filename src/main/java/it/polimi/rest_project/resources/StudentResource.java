@@ -24,12 +24,19 @@ import it.polimi.rest_project.services.StudentService;
 @Path("students")
 public class StudentResource {
 
+	/** The student service used by the resource */
 	private StudentService studentService;
 
+	/**
+	 * Default constructor that initializes the service used by the resource
+	 */
 	public StudentResource() {
 		studentService = new StudentService();
 	}
 
+	/**
+	 * Returns the list of students that can be viewed by the user
+	 */
 	@GET
 	public List<Student> getStudents(@Context ContainerRequestContext requestContext,
 			@QueryParam("classroomId") String classId) {
@@ -40,6 +47,9 @@ public class StudentResource {
 
 	}
 
+	/**
+	 * Returns the student if it can be viewed by the user
+	 */
 	@GET
 	@Path("{studentId}")
 	public Student getStudent(@PathParam("studentId") String studentId,
@@ -48,6 +58,13 @@ public class StudentResource {
 		return studentService.getStudent(userId, studentId);
 	}
 
+	/**
+	 * Gets the userId of the user who made the request
+	 * 
+	 * @param requestContext
+	 *            the request context of this call
+	 * @return the id of the user who made the request
+	 */
 	private String getUserId(ContainerRequestContext requestContext) {
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
 		String auth = headers.get(0);
@@ -58,6 +75,9 @@ public class StudentResource {
 		return userId;
 	}
 
+	/**
+	 * Updates the resource with the parameters taken as input
+	 */
 	@PUT
 	@Path("{studentId}")
 	public Response updateStudent(@PathParam("studentId") String studentId,
@@ -68,6 +88,9 @@ public class StudentResource {
 		return studentService.updateData(userId, studentId, name, surname, year, month, day);
 	}
 
+	/**
+	 * Creates a resource with the parameters taken as input if the user who made the request is allowed to do it
+	 */
 	@POST
 	public Response createStudent(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
 			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") Integer year,
@@ -77,6 +100,9 @@ public class StudentResource {
 				uriInfo.getBaseUri().toString());
 	}
 
+	/**
+	 * Calls the subresource methods
+	 */
 	@Path("{studentId}/grades")
 	public GradeResource getGradeResource() {
 		return new GradeResource();

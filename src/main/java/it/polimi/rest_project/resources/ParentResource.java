@@ -23,18 +23,28 @@ import it.polimi.rest_project.services.ParentService;
 @Path("parents")
 public class ParentResource {
 
+	/** The parent service used by the resource */
 	private ParentService parentService;
 
+	/**
+	 * Default constructor that initializes the service used by the resource
+	 */
 	public ParentResource() {
 		parentService = new ParentService();
 	}
 
+	/**
+	 * Returns the list of parents that can be viewed by the user
+	 */
 	@GET
 	public List<Parent> getParents(@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return parentService.getParents(userId);
 	}
 
+	/**
+	 * Returns the parent if it can be viewed by the user
+	 */
 	@GET
 	@Path("{parentId}")
 	public Parent getParent(@PathParam("parentId") String parentId, @Context ContainerRequestContext requestContext) {
@@ -42,6 +52,13 @@ public class ParentResource {
 		return parentService.getParent(userId, parentId);
 	}
 
+	/**
+	 * Gets the userId of the user who made the request
+	 * 
+	 * @param requestContext
+	 *            the request context of this call
+	 * @return the id of the user who made the request
+	 */
 	private String getUserId(ContainerRequestContext requestContext) {
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
 		String auth = headers.get(0);
@@ -52,6 +69,9 @@ public class ParentResource {
 		return userId;
 	}
 
+	/**
+	 * Updates the resource with the parameters taken as input
+	 */
 	@PUT
 	@Path("{parentId}")
 	public Response updateParent(@PathParam("parentId") String parentId,
@@ -62,6 +82,9 @@ public class ParentResource {
 		return parentService.updateData(userId, parentId, name, surname, studentId, year, month, day);
 	}
 
+	/**
+	 * Creates a resource with the parameters taken as input if the user who made the request is allowed to do it
+	 */
 	@POST
 	public Response createParent(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
 			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") Integer year,

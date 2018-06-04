@@ -23,18 +23,28 @@ import it.polimi.rest_project.services.TeacherService;
 @Path("teachers")
 public class TeacherResource {
 
+	/** The teacher service used by the resource */
 	private TeacherService teacherService;
 
+	/**
+	 * Default constructor that initializes the service used by the resource
+	 */
 	public TeacherResource() {
 		teacherService = new TeacherService();
 	}
 
+	/**
+	 * Returns the list of teachers that can be viewed by the user
+	 */
 	@GET
 	public List<Teacher> getTeachers(@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return teacherService.getTeachers(userId);
 	}
 
+	/**
+	 * Returns the teacher if it can be viewed by the user
+	 */
 	@GET
 	@Path("{teacherId}")
 	public Teacher getParent(@PathParam("teacherId") String teacherId,
@@ -43,6 +53,13 @@ public class TeacherResource {
 		return teacherService.getTeacher(userId, teacherId);
 	}
 
+	/**
+	 * Gets the userId of the user who made the request
+	 * 
+	 * @param requestContext
+	 *            the request context of this call
+	 * @return the id of the user who made the request
+	 */
 	private String getUserId(ContainerRequestContext requestContext) {
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
 		String auth = headers.get(0);
@@ -53,6 +70,9 @@ public class TeacherResource {
 		return userId;
 	}
 
+	/**
+	 * Updates the resource with the parameters taken as input
+	 */
 	@PUT
 	@Path("{teacherId}")
 	public Response updateTeacher(@PathParam("teacherId") String teacherId,
@@ -63,6 +83,9 @@ public class TeacherResource {
 		return teacherService.updateData(userId, teacherId, name, surname, year, month, day);
 	}
 
+	/**
+	 * Creates a resource with the parameters taken as input if the user who made the request is allowed to do it
+	 */
 	@POST
 	public Response createTeacher(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
 			@FormParam("name") String name, @FormParam("surname") String surname, @FormParam("year") Integer year,

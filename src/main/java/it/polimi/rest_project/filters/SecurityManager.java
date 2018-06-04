@@ -1,4 +1,4 @@
-package it.polimi.rest_project.security;
+package it.polimi.rest_project.filters;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,10 +17,18 @@ import org.glassfish.jersey.internal.util.Base64;
 import it.polimi.rest_project.application.Back2School;
 import it.polimi.rest_project.services.UserService;
 
+/**
+ * The security manager
+ *
+ */
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class SecurityManager implements ContainerRequestFilter {
 
+	/**
+	 * It checks that the user is logged in when it performs a request.
+	 * 
+	 */
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		UserService userService = new UserService();
@@ -36,9 +44,9 @@ public class SecurityManager implements ContainerRequestFilter {
 				return;
 			else
 				requestContext
-						.abortWith(Response.status(Status.UNAUTHORIZED).entity("Incorrect id or password").build());
+						.abortWith(Response.status(Status.UNAUTHORIZED).entity("Incorrect Id or Password").build());
 		} catch (NullPointerException e) {
-			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("You have to log in").build());
+			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("You must be logged in").build());
 		}
 	}
 }

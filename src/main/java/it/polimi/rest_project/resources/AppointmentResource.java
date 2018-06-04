@@ -24,18 +24,28 @@ import it.polimi.rest_project.services.AppointmentService;
 @Path("appointments")
 public class AppointmentResource {
 
+	/** The appointment service used by the resource */
 	private AppointmentService appointmentService;
 
+	/**
+	 * Default constructor that initializes the service used by the resource
+	 */
 	public AppointmentResource() {
 		appointmentService = new AppointmentService();
 	}
 
+	/**
+	 * Returns the list of appointments that can be viewed by the user
+	 */
 	@GET
 	public List<Appointment> getAppointments(@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return appointmentService.getAppointments(userId);
 	}
 
+	/**
+	 * Returns the appointment if it can be viewed by the user
+	 */
 	@GET
 	@Path("{appointmentId}")
 	public Appointment getAppointment(@PathParam("appointmentId") String appointmentId,
@@ -44,6 +54,13 @@ public class AppointmentResource {
 		return appointmentService.getAppointment(userId, appointmentId);
 	}
 
+	/**
+	 * Gets the userId of the user who made the request
+	 * 
+	 * @param requestContext
+	 *            the request context of this call
+	 * @return the id of the user who made the request
+	 */
 	private String getUserId(ContainerRequestContext requestContext) {
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
 		String auth = headers.get(0);
@@ -54,6 +71,9 @@ public class AppointmentResource {
 		return userId;
 	}
 
+	/**
+	 * Updates the resource with the parameters taken as input
+	 */
 	@PUT
 	@Path("{appointmentId}")
 	public Response updateAppointment(@PathParam("appointmentId") String appointmentId,
@@ -63,6 +83,9 @@ public class AppointmentResource {
 		return appointmentService.updateAppointment(userId, appointmentId, day, month, year);
 	}
 
+	/**
+	 * Creates a resource with the parameters taken as input, if the user who made the request is allowed to do it
+	 */
 	@POST
 	public Response addAppointment(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
 			@FormParam("year") Integer year, @FormParam("month") Integer month, @FormParam("day") Integer day,
@@ -71,6 +94,9 @@ public class AppointmentResource {
 		return appointmentService.createAppointment(userId, user2Id, day, month, year, uriInfo.getBaseUri().toString());
 	}
 
+	/**
+	 * Deletes the resource with the id taken as input, if the user who made the request is allowed to do it
+	 */
 	@DELETE
 	@Path("{appointmentId}")
 	public Response deleteAppointment(@Context ContainerRequestContext requestContext,

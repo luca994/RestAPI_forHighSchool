@@ -25,18 +25,28 @@ import it.polimi.rest_project.services.ClassroomService;
 @Path("classrooms")
 public class ClassroomResource {
 
+	/** The classroom service used by the resource */
 	private ClassroomService classroomService;
 
+	/**
+	 * Default constructor that initializes the service used by the resource
+	 */
 	public ClassroomResource() {
 		classroomService = new ClassroomService();
 	}
 
+	/**
+	 * Returns the list of classrooms that can be viewed by the user
+	 */
 	@GET
 	public List<Classroom> getClassrooms(@Context ContainerRequestContext requestContext) {
 		String userId = getUserId(requestContext);
 		return classroomService.getClassrooms(userId);
 	}
 
+	/**
+	 * Returns the classroom if it can be viewed by the user
+	 */
 	@GET
 	@Path("{classroomId}")
 	public Classroom getClassroom(@PathParam("classroomId") String classroomId,
@@ -45,6 +55,13 @@ public class ClassroomResource {
 		return classroomService.getClassroom(userId, classroomId);
 	}
 
+	/**
+	 * Gets the userId of the user who made the request
+	 * 
+	 * @param requestContext
+	 *            the request context of this call
+	 * @return the id of the user who made the request
+	 */
 	private String getUserId(ContainerRequestContext requestContext) {
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
 		String auth = headers.get(0);
@@ -55,6 +72,9 @@ public class ClassroomResource {
 		return userId;
 	}
 
+	/**
+	 * Adds a student or a lecture to the class with the classroomId
+	 */
 	@PUT
 	@Path("{classroomId}")
 	public Response addInfoToClassroom(@PathParam("classroomId") String classroomId,
@@ -68,6 +88,9 @@ public class ClassroomResource {
 		return Response.status(Status.BAD_REQUEST).build();
 	}
 
+	/**
+	 * Creates a resource with the parameters taken as input if the user who made the request is allowed to do it
+	 */
 	@POST
 	public Response createClassroom(@Context UriInfo uriInfo, @FormParam("classroomId") String classroomId,
 			@Context ContainerRequestContext requestContext) {
@@ -75,6 +98,9 @@ public class ClassroomResource {
 		return classroomService.createClassroom(userId, classroomId, uriInfo.getBaseUri().toString());
 	}
 
+	/**
+	 * Deletes the resource with the id taken as input, if the user who made the request is allowed to do it
+	 */
 	@DELETE
 	@Path("{classroomId}")
 	public Response deleteClassroom(@PathParam("classroomId") String classroomId,
@@ -83,6 +109,9 @@ public class ClassroomResource {
 		return classroomService.deleteClassroom(userId, classroomId);
 	}
 	
+	/**
+	 * Calls the subresource methods
+	 */
 	@Path("{classroomId}/lectures")
 	public LectureResource getGradeResource() {
 		return new LectureResource();

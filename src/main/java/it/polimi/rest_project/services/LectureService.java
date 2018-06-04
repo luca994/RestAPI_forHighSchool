@@ -60,6 +60,9 @@ public class LectureService {
 
 	}
 
+	/**
+	 * Adds the accessible resources to the entity
+	 */
 	private void addResources(Lecture lecture, String baseUri) {
 		Link self = new Link(baseUri + "/" + lecture.getId(), "self");
 		lecture.getResources().add(self);

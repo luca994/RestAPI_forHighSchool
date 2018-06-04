@@ -23,12 +23,19 @@ import it.polimi.rest_project.services.NotificationService;
 @Path("notifications")
 public class NotificationResource {
 
+	/** The notification service used by the resource */
 	private NotificationService notificationService;
 
+	/**
+	 * Default constructor that initializes the service used by the resource
+	 */
 	public NotificationResource() {
 		notificationService = new NotificationService();
 	}
 
+	/**
+	 * Returns the list of notifications that can be viewed by the user
+	 */
 	@GET
 	public List<Notification> getNotifications(@Context ContainerRequestContext requestContext,
 			@QueryParam("type") String type) {
@@ -43,6 +50,9 @@ public class NotificationResource {
 		return notificationService.getNotifications(userId);
 	}
 
+	/**
+	 * Returns the notification if it can be viewed by the user
+	 */
 	@GET
 	@Path("{notificationId}")
 	public Notification getNotification(@PathParam("notificationId") String notificationId,
@@ -51,6 +61,13 @@ public class NotificationResource {
 		return notificationService.getNotification(userId, notificationId);
 	}
 
+	/**
+	 * Gets the userId of the user who made the request
+	 * 
+	 * @param requestContext
+	 *            the request context of this call
+	 * @return the id of the user who made the request
+	 */
 	private String getUserId(ContainerRequestContext requestContext) {
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
 		String auth = headers.get(0);
@@ -67,12 +84,6 @@ public class NotificationResource {
 	 * creates a general notification for all the parents which have a child
 	 * enrolled in that class. If the id is null it creates a general notification
 	 * for all the parents and all the teachers in the system
-	 * 
-	 * @param uriInfo
-	 * @param requestContext
-	 * @param id
-	 * @param text
-	 * @return
 	 */
 	@POST
 	public Response addNotification(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,

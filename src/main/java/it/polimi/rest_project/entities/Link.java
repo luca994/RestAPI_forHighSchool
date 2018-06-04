@@ -22,18 +22,32 @@ public class Link implements Serializable {
 		}
 	}
 
+	/**
+	 * @return the href
+	 */
 	public URI getHref() {
 		return href;
 	}
 
+	/**
+	 * @return the rel
+	 */
 	public String getRel() {
 		return rel;
 	}
 
+	/**
+	 * @param href
+	 *            the href to set
+	 */
 	public void setHref(URI href) {
 		this.href = href;
 	}
 
+	/**
+	 * @param rel
+	 *            the rel to set
+	 */
 	public void setRel(String rel) {
 		this.rel = rel;
 	}

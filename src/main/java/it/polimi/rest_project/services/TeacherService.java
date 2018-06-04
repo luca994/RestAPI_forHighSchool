@@ -25,7 +25,7 @@ public class TeacherService extends UserService {
 		if ((userId.equals(teacherId) || isAdministrator(userId)) && isTeacher(teacherId))
 			return updateTeacherData(teacherId, name, surname, day, month, year);
 		else
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.UNAUTHORIZED).entity("You must be logged as "+teacherId+" or as an administrator to update his data").build();
 	}
 
 	public Response updateTeacherData(String id, String name, String surname, Integer day, Integer month,
@@ -47,7 +47,7 @@ public class TeacherService extends UserService {
 			String password, String baseUri) {
 		if (isAdministrator(userId)) {
 			if (name == null || surname == null || day == null || month == null || year == null || password == null)
-				return Response.status(Status.BAD_REQUEST).build();
+				return Response.status(Status.BAD_REQUEST).entity("Some parameters are missing, you must insert all the parameters").build();
 			Teacher newTeacher = new Teacher(name, surname, password, new GregorianCalendar(year, month - 1, day));
 			addResources(newTeacher, baseUri);
 			entityManager.getTransaction().begin();
@@ -55,9 +55,12 @@ public class TeacherService extends UserService {
 			entityManager.getTransaction().commit();
 			return Response.created(newTeacher.getResources().get(0).getHref()).entity(newTeacher).build();
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		return Response.status(Status.UNAUTHORIZED).entity("You must be logged in as administrator to create a teacher").build();
 	}
 
+	/**
+	 * Adds the accessible resources to the entity
+	 */
 	private void addResources(Teacher teacher, String baseUri) {
 		Link self = new Link(baseUri + "teachers" + "/" + teacher.getUserId(), "self");
 		Link classrooms = new Link(baseUri + "classrooms", "classrooms");

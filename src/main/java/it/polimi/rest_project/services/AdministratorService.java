@@ -21,12 +21,13 @@ public class AdministratorService extends UserService {
 		return null;
 	}
 
-	public Response updateData(String userId, String teacherId, String name, String surname, Integer day, Integer month,
+	public Response updateData(String userId, String adminId, String name, String surname, Integer day, Integer month,
 			Integer year) {
-		if (userId.equals(teacherId) && isAdministrator(userId))
-			return updateAdministratorData(teacherId, name, surname, day, month, year);
+		if (userId.equals(adminId) && isAdministrator(userId))
+			return updateAdministratorData(adminId, name, surname, day, month, year);
 		else
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.UNAUTHORIZED)
+					.entity("You must be logged as " + adminId + " to update his data").build();
 	}
 
 	public Response updateAdministratorData(String id, String name, String surname, Integer day, Integer month,
@@ -48,17 +49,23 @@ public class AdministratorService extends UserService {
 			Integer day, String password, String baseUri) {
 		if (isAdministrator(userId)) {
 			if (name == null || surname == null || day == null || month == null || year == null || password == null)
-				return Response.status(Status.BAD_REQUEST).build();
-			Administrator newAdministrator = new Administrator(name,surname,password,new GregorianCalendar(year, month - 1, day));
+				return Response.status(Status.BAD_REQUEST)
+						.entity("Some parameters are missing, you must insert all the parameters").build();
+			Administrator newAdministrator = new Administrator(name, surname, password,
+					new GregorianCalendar(year, month - 1, day));
 			addResources(newAdministrator, baseUri);
 			entityManager.getTransaction().begin();
 			entityManager.persist(newAdministrator);
 			entityManager.getTransaction().commit();
 			return Response.created(newAdministrator.getResources().get(0).getHref()).entity(newAdministrator).build();
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		return Response.status(Status.UNAUTHORIZED)
+				.entity("You must be logged in as administrator to create another administrator").build();
 	}
 
+	/**
+	 * Adds the accessible resources to the entity
+	 */
 	private void addResources(Administrator administrator, String baseUri) {
 		Link self = new Link(baseUri + "admins" + "/" + administrator.getUserId(), "self");
 		Link students = new Link(baseUri + "students", "students");

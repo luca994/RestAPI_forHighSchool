@@ -58,6 +58,9 @@ public class PaymentService {
 		return Response.status(Status.UNAUTHORIZED).build();
 	}
 
+	/**
+	 * Adds the accessible resources to the entity
+	 */
 	private void addResources(Payment payment, String baseUri) {
 		Link self = new Link(baseUri + "payments" + "/" + payment.getPaymentId(), "self");
 		payment.getResources().add(self);

@@ -49,7 +49,7 @@ public class AppointmentService {
 			if (day != null || month != null || year != null) {
 				if (areAvailable(targetAppointment.getParent().getUserId(), targetAppointment.getTeacher().getUserId(),
 						day, month, year) == false)
-					return Response.status(Status.BAD_REQUEST).build();
+					return Response.status(Status.BAD_REQUEST).entity("One person is not available on this date").build();
 				targetAppointment.setDate(new GregorianCalendar(year, month - 1, day));
 			}
 			UserService userService = new UserService();
@@ -69,13 +69,12 @@ public class AppointmentService {
 			String baseUri) {
 		if (day == null || month == null || year == null
 				|| new GregorianCalendar().after(new GregorianCalendar(year, month, day)))
-			return Response.status(Status.BAD_REQUEST).entity("Incorrect date").build();
+			return Response.status(Status.BAD_REQUEST).entity("Invalid date").build();
 		UserService userService = new UserService();
 		Appointment newAppointment = new Appointment();
-		System.out.println();
 		if (userService.isParent(userId) && userService.isTeacher(user2Id)) {
 			if (areAvailable(userId, user2Id, day, month, year) == false)
-				return Response.status(Status.BAD_REQUEST).entity("One of the two person is busy in that date").build();
+				return Response.status(Status.BAD_REQUEST).entity("One person is not available on this date").build();
 			newAppointment.setParent(entityManager.find(Parent.class, userId));
 			newAppointment.setTeacher(entityManager.find(Teacher.class, user2Id));
 			newAppointment.setDate(new GregorianCalendar(year, month - 1, day));
@@ -88,7 +87,7 @@ public class AppointmentService {
 		}
 		if (userService.isParent(user2Id) && userService.isTeacher(userId)) {
 			if (areAvailable(userId, user2Id, day, month, year) == false)
-				return Response.status(Status.BAD_REQUEST).build();
+				return Response.status(Status.BAD_REQUEST).entity("One person is not available on this date").build();
 			newAppointment.setParent(entityManager.find(Parent.class, user2Id));
 			newAppointment.setTeacher(entityManager.find(Teacher.class, userId));
 			newAppointment.setDate(new GregorianCalendar(year, month - 1, day));
@@ -99,7 +98,7 @@ public class AppointmentService {
 			entityManager.getTransaction().commit();
 			return Response.created(newAppointment.getResources().get(0).getHref()).entity(newAppointment).build();
 		}
-		return Response.status(Status.BAD_REQUEST).build();
+		return Response.status(Status.BAD_REQUEST).entity("You can create only appointment between a parent and a teacher").build();
 	}
 
 	private boolean areAvailable(String userId, String user2Id, Integer day, Integer month, Integer year) {
@@ -155,6 +154,9 @@ public class AppointmentService {
 		return false;
 	}
 
+	/**
+	 * Adds the accessible resources to the entity
+	 */
 	private void addResources(Appointment appointment, String baseUri) {
 		Link self = new Link(baseUri + "appointments" + "/" + appointment.getAppointmentId(), "self");
 		appointment.getResources().add(self);
@@ -181,9 +183,9 @@ public class AppointmentService {
 			entityManager.getTransaction().begin();
 			entityManager.remove(toDelete);
 			entityManager.getTransaction().commit();
-			return Response.status(Status.NO_CONTENT).entity("Deleted").build();
+			return Response.status(Status.NO_CONTENT).entity("Appointment "+appointmentId+" deleted").build();
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		return Response.status(Status.UNAUTHORIZED).entity("You must be a person involved in this appointment to delete it").build();
 	}
 
 }

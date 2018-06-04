@@ -30,7 +30,7 @@ public class ParentService extends UserService {
 			return updateParentData(parentId, name, surname, childId, day, month, year);
 		}
 		else
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.UNAUTHORIZED).entity("You must be logged as "+parentId+" or as an administrator to update his data").build();
 	}
 
 	public Response updateParentData(String id, String name, String surname, String childId, Integer day, Integer month,
@@ -62,7 +62,7 @@ public class ParentService extends UserService {
 			String password, String baseUri) {
 		if (isAdministrator(userId)) {
 			if (name == null || surname == null || day == null || month == null || year == null || password == null)
-				return Response.status(Status.BAD_REQUEST).build();
+				return Response.status(Status.BAD_REQUEST).entity("Some parameters are missing, you must insert all the parameters").build();
 			Parent newParent = new Parent(name, surname, password, new GregorianCalendar(year, month - 1, day));
 			addResources(newParent, baseUri);
 			entityManager.getTransaction().begin();
@@ -70,9 +70,12 @@ public class ParentService extends UserService {
 			entityManager.getTransaction().commit();
 			return Response.created(newParent.getResources().get(0).getHref()).entity(newParent).build();
 		}
-		return Response.status(Status.UNAUTHORIZED).build();
+		return Response.status(Status.UNAUTHORIZED).entity("You must be logged in as administrator to create another parent").build();
 	}
 
+	/**
+	 * Adds the accessible resources to the entity
+	 */
 	private void addResources(Parent parent, String baseUri) {
 		Link self = new Link(baseUri + "parents" + "/" + parent.getUserId(), "self");
 		Link students = new Link(baseUri + "students", "children");

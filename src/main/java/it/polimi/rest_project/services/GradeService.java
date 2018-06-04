@@ -101,6 +101,9 @@ public class GradeService {
 			return Response.status(Status.UNAUTHORIZED).build();
 	}
 
+	/**
+	 * Adds the accessible resources to the entity
+	 */
 	private void addResources(Grade grade, String baseUri) {
 		Link self = new Link(baseUri + "/" + grade.getGradeId(), "self");
 		grade.getResources().add(self);

@@ -1,5 +1,6 @@
 package it.polimi.rest_project.entities;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,23 +27,40 @@ import it.polimi.rest_project.json.OptimizedDateSerializer;
 @Entity
 @Table(name = "Users")
 @JsonPropertyOrder({ "userId", "name", "surname", "dateOfBirth", "resources" })
-public abstract class User {
+public abstract class User implements Serializable {
 
+	
+	private static final long serialVersionUID = 6780293194341869904L;
+	
+	/** the id of the user */
 	@Id
 	private String userId;
+	
+	/** the password of the user */
 	@Column
 	@JsonIgnore
 	private byte[] password;
+	
+	/** the name of the user */
 	@Column
 	private String name;
+	
+	/** the surname of the user */
 	@Column
 	private String surname;
+	
+	/** the date of birth of the user */
 	@Column
 	@JsonSerialize(using = OptimizedDateSerializer.class)
 	private Calendar dateOfBirth;
+	
+	/** the resources of the user */
 	@JoinColumn
 	private List<Link> resources;
 
+	/**
+	 * Default constructor for the user
+	 */
 	public User() {
 		RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', 'z')
 				.filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS).build();
@@ -62,50 +80,19 @@ public abstract class User {
 		setPassword(password);
 	}
 
-	public String getUserId() {
-		return userId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public Calendar getDateOfBirth() {
-		return dateOfBirth;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public void setDateOfBirth(Calendar dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
-
-	public List<Link> getResources() {
-		return resources;
-	}
-
-	public void setResources(List<Link> resources) {
-		this.resources = resources;
-	}
-
+	/**
+	 * @return the userPassowrd
+	 */
 	public byte[] getPassword() {
 		return password;
 	}
 
+	/**
+	 * Set the password as the hash of the password taken as input
+	 * 
+	 * @param password
+	 *            the user password
+	 */
 	public void setPassword(String password) {
 		try {
 			byte[] plainPsw = password.getBytes("UTF-8");
@@ -117,6 +104,86 @@ public abstract class User {
 		}
 	}
 
+	/**
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @return the surname
+	 */
+	public String getSurname() {
+		return surname;
+	}
+
+	/**
+	 * @return the dateOfBirth
+	 */
+	public Calendar getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	/**
+	 * @return the resources
+	 */
+	public List<Link> getResources() {
+		return resources;
+	}
+
+	/**
+	 * @param userId
+	 *            the userId to set
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @param surname
+	 *            the surname to set
+	 */
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	/**
+	 * @param dateOfBirth
+	 *            the dateOfBirth to set
+	 */
+	public void setDateOfBirth(Calendar dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	/**
+	 * @param resources
+	 *            the resources to set
+	 */
+	public void setResources(List<Link> resources) {
+		this.resources = resources;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -125,6 +192,11 @@ public abstract class User {
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

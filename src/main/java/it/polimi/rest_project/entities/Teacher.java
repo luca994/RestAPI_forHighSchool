@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 @Entity
 public class Teacher extends User {
 
+	
+	private static final long serialVersionUID = 2437572764439715603L;
+
 	public Teacher() {
 		super();
 	}

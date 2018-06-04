@@ -24,12 +24,19 @@ import it.polimi.rest_project.services.PaymentService;
 @Path("payments")
 public class PaymentResource {
 
+	/** The payment service used by the resource */
 	private PaymentService paymentService;
 
+	/**
+	 * Default constructor that initializes the service used by the resource
+	 */
 	public PaymentResource() {
 		paymentService = new PaymentService();
 	}
 
+	/**
+	 * Returns the list of payments that can be viewed by the user
+	 */
 	@GET
 	public List<Payment> getPayments(@Context ContainerRequestContext requestContext,
 			@QueryParam("month") Integer month) {
@@ -39,6 +46,9 @@ public class PaymentResource {
 		return paymentService.getPayments(userId);
 	}
 
+	/**
+	 * Returns the payment if it can be viewed by the user
+	 */
 	@GET
 	@Path("{paymentId}")
 	public Payment getPayment(@PathParam("paymentId") String paymentId,
@@ -47,6 +57,13 @@ public class PaymentResource {
 		return paymentService.getPayment(userId, paymentId);
 	}
 
+	/**
+	 * Gets the userId of the user who made the request
+	 * 
+	 * @param requestContext
+	 *            the request context of this call
+	 * @return the id of the user who made the request
+	 */
 	private String getUserId(ContainerRequestContext requestContext) {
 		List<String> headers = requestContext.getHeaders().get(Back2School.AUTHORIZATION_HEADER_KEY);
 		String auth = headers.get(0);
@@ -57,6 +74,9 @@ public class PaymentResource {
 		return userId;
 	}
 
+	/**
+	 * Creates a resource with the parameters taken as input if the user who made the request is allowed to do it
+	 */
 	@POST
 	public Response addPayment(@Context UriInfo uriInfo, @Context ContainerRequestContext requestContext,
 			@FormParam("user2Id") String user2Id, @FormParam("amount") String amount,

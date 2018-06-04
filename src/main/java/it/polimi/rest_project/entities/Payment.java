@@ -1,5 +1,6 @@
 package it.polimi.rest_project.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -23,8 +24,9 @@ import it.polimi.rest_project.json.OptimizedDateSerializer;
 @Entity
 @Table(name = "Payments")
 @JsonPropertyOrder({ "paymentId", "date", "amount", "reason", "done", "user", "resources" })
-public class Payment {
+public class Payment implements Serializable {
 
+	private static final long serialVersionUID = -7032322720137769992L;
 	@Id
 	private String paymentId;
 	@Column
@@ -35,7 +37,7 @@ public class Payment {
 	@Column
 	private String reason;
 	@JoinColumn
-	@JsonIgnoreProperties({ "userId", "dateOfBirth","students","resources" })
+	@JsonIgnoreProperties({ "userId", "dateOfBirth", "students", "resources" })
 	private User user;
 	@Column
 	private boolean done;
@@ -51,58 +53,107 @@ public class Payment {
 		done = false;
 	}
 
+	/**
+	 * @return the paymentId
+	 */
 	public String getPaymentId() {
 		return paymentId;
 	}
 
+	/**
+	 * @return the amount
+	 */
 	public Integer getAmount() {
 		return amount;
 	}
 
+	/**
+	 * @return the date
+	 */
 	public Calendar getDate() {
 		return date;
 	}
 
+	/**
+	 * @return the reason
+	 */
 	public String getReason() {
 		return reason;
 	}
 
+	/**
+	 * @return the user
+	 */
 	public User getUser() {
 		return user;
 	}
 
+	/**
+	 * @return the done
+	 */
 	public boolean isDone() {
 		return done;
 	}
 
+	/**
+	 * @return the resources
+	 */
 	public List<Link> getResources() {
 		return resources;
 	}
 
+	/**
+	 * @param paymentId
+	 *            the paymentId to set
+	 */
 	public void setPaymentId(String paymentId) {
 		this.paymentId = paymentId;
 	}
 
+	/**
+	 * @param amount
+	 *            the amount to set
+	 */
 	public void setAmount(Integer amount) {
 		this.amount = amount;
 	}
 
+	/**
+	 * @param date
+	 *            the date to set
+	 */
 	public void setDate(Calendar date) {
 		this.date = date;
 	}
 
+	/**
+	 * @param reason
+	 *            the reason to set
+	 */
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
 
+	/**
+	 * @param user
+	 *            the user to set
+	 */
 	public void setUser(User user) {
 		this.user = user;
 	}
 
+	/**
+	 * @param done
+	 *            the done to set
+	 */
 	public void setDone(boolean done) {
 		this.done = done;
 	}
 
+	/**
+	 * @param resources
+	 *            the resources to set
+	 */
 	public void setResources(List<Link> resources) {
 		this.resources = resources;
 	}
